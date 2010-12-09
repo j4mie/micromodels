@@ -52,5 +52,10 @@ class CharFieldTestCase(unittest.TestCase):
         self.field.populate('somestring')
         self.assertEqual(self.field.to_python(), 'somestring')
 
+    def test_none_conversion(self):
+        """CharField should convert None to empty string"""
+        self.field.populate(None)
+        self.assertEqual(self.field.to_python(), '')
+
 if __name__ == "__main__":
     unittest.main()
