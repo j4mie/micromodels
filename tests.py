@@ -43,5 +43,14 @@ class FieldBaseTestCase(unittest.TestCase):
         field = micromodels.fields.FieldBase(source='customsource')
         self.assertEqual(field.source, 'customsource')
 
+class CharFieldTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.field = micromodels.CharField()
+
+    def test_string_conversion(self):
+        self.field.populate('somestring')
+        self.assertEqual(self.field.to_python(), 'somestring')
+
 if __name__ == "__main__":
     unittest.main()
