@@ -3,6 +3,13 @@ class FieldBase(object):
     """Base class for all field types"""
 
     def __init__(self, source=None):
+        """Create a new instance of a field class.
+
+        Keyword arguments:
+        source -- the key holding the value for this field to use in the
+        source data. If not supplied, the name of the class property this
+        instance is assigned to will be used.
+        """
         self.source = source
 
     def populate(self, data):
@@ -10,22 +17,32 @@ class FieldBase(object):
         self.data = data
 
 class CharField(FieldBase):
+    """Field to represent a simple Unicode string value"""
 
     def to_python(self):
+        """Convert the data supplied to the `populate` method to a Unicode string"""
         if self.data is None:
             return ''
         return unicode(self.data)
 
 class IntegerField(FieldBase):
+    """Field to represent an integer value"""
 
     def to_python(self):
+        """Convert the data supplied to the `populate` method to an integer"""
         if self.data is None:
             return 0
         return int(self.data)
 
 class BooleanField(FieldBase):
+    """Field to represent a boolean"""
 
     def to_python(self):
+        """Convert the data supplied to the `populate` method to a boolean value.
+
+        The string "True" (case insensitive) will be converted
+        to True, as will any positive integers.
+        """
         if isinstance(self.data, basestring):
             return self.data.strip().lower() == 'true'
         if isinstance(self.data, int):
