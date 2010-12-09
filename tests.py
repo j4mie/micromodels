@@ -66,5 +66,10 @@ class IntegerFieldTestCase(unittest.TestCase):
         self.field.populate('123')
         self.assertEqual(self.field.to_python(), 123)
 
+    def test_none_conversion(self):
+        """IntegerField should convert None to 0"""
+        self.field.populate(None)
+        self.assertEqual(self.field.to_python(), 0)
+
 if __name__ == "__main__":
     unittest.main()

@@ -19,4 +19,6 @@ class CharField(FieldBase):
 class IntegerField(FieldBase):
 
     def to_python(self):
+        if self.data is None:
+            return 0
         return int(self.data)
