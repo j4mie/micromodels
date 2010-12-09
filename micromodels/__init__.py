@@ -1,2 +1,2 @@
 from models import Model
-from fields import CharField, IntegerField
+from fields import CharField, IntegerField, BooleanField

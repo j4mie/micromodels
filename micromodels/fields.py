@@ -22,3 +22,8 @@ class IntegerField(FieldBase):
         if self.data is None:
             return 0
         return int(self.data)
+
+class BooleanField(FieldBase):
+
+    def to_python(self):
+        return self.data

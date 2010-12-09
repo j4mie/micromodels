@@ -71,5 +71,18 @@ class IntegerFieldTestCase(unittest.TestCase):
         self.field.populate(None)
         self.assertEqual(self.field.to_python(), 0)
 
+class BooleanFieldTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.field = micromodels.BooleanField()
+
+    def test_true_conversion(self):
+        self.field.populate(True)
+        self.assertEqual(self.field.to_python(), True)
+
+    def test_false_conversion(self):
+        self.field.populate(False)
+        self.assertEqual(self.field.to_python(), False)
+
 if __name__ == "__main__":
     unittest.main()
