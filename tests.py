@@ -1,9 +1,9 @@
 import unittest
-import dictmodels
+import micromodels
 
-class SimpleModel(dictmodels.Model):
-    name = dictmodels.CharField()
-    field_with_source = dictmodels.CharField(source='foo')
+class SimpleModel(micromodels.Model):
+    name = micromodels.CharField()
+    field_with_source = micromodels.CharField(source='foo')
 
 class ClassCreationTestCase(unittest.TestCase):
 
@@ -20,7 +20,7 @@ class ClassCreationTestCase(unittest.TestCase):
 
     def test_field_collected(self):
         """Model property should be of correct type"""
-        self.assertTrue(isinstance(self.instance._fields['name'], dictmodels.CharField))
+        self.assertTrue(isinstance(self.instance._fields['name'], micromodels.CharField))
 
     def test_field_source_not_set(self):
         """Field without a custom source should have a source of None"""
