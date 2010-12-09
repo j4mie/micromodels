@@ -30,5 +30,18 @@ class ClassCreationTestCase(unittest.TestCase):
         """Field with custom source specificied should have source property set correctly"""
         self.assertEqual(self.instance._fields['field_with_source'].source, 'foo')
 
+class FieldBaseTestCase(unittest.TestCase):
+
+    def test_field_without_provided_source(self):
+        """If no source parameter is provided, the field's source attribute should be None"""
+        field = micromodels.fields.FieldBase()
+        self.assertTrue(hasattr(field, 'source'))
+        self.assertTrue(field.source is None)
+
+    def test_field_with_provided_source(self):
+        """If a source parameter is provided, the field's source attribute should be set to the value of this parameter"""
+        field = micromodels.fields.FieldBase(source='customsource')
+        self.assertEqual(field.source, 'customsource')
+
 if __name__ == "__main__":
     unittest.main()
