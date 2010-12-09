@@ -62,6 +62,10 @@ class IntegerFieldTestCase(unittest.TestCase):
     def setUp(self):
         self.field = micromodels.IntegerField()
 
+    def test_integer_conversion(self):
+        self.field.populate(123)
+        self.assertEqual(self.field.to_python(), 123)
+
     def test_string_conversion(self):
         self.field.populate('123')
         self.assertEqual(self.field.to_python(), 123)
