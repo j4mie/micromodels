@@ -16,3 +16,8 @@ class CharField(FieldBase):
         if self.data is None:
             return ''
         return unicode(self.data)
+
+class IntegerField(FieldBase):
+
+    def to_python(self):
+        return int(self.data)

@@ -57,5 +57,14 @@ class CharFieldTestCase(unittest.TestCase):
         self.field.populate(None)
         self.assertEqual(self.field.to_python(), '')
 
+class IntegerFieldTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.field = micromodels.IntegerField()
+
+    def test_string_conversion(self):
+        self.field.populate('123')
+        self.assertEqual(self.field.to_python(), 123)
+
 if __name__ == "__main__":
     unittest.main()
