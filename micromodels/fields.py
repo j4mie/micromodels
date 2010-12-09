@@ -26,4 +26,8 @@ class IntegerField(FieldBase):
 class BooleanField(FieldBase):
 
     def to_python(self):
-        return self.data
+        if isinstance(self.data, basestring):
+            return self.data.strip().lower() == 'true'
+        if isinstance(self.data, int):
+            return self.data > 0
+        return bool(self.data)
