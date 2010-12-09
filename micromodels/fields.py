@@ -10,7 +10,6 @@ class FieldBase(object):
         self.data = data
 
 class CharField(FieldBase):
-    """Class to represent a simple string field"""
 
     def to_python(self):
         if self.data is None:
