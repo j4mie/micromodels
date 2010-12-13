@@ -138,5 +138,20 @@ class InstanceTestCase(unittest.TestCase):
 
         self.assertEqual(instance.first, data['custom_source'])
 
+
+class ModelFieldTestCase(unittest.TestCase):
+
+    def test_model_field_creation(self):
+        class IsASubModel(micromodels.Model):
+            first = micromodels.CharField()
+
+        class HasAModelField(micromodels.Model):
+            first = micromodels.ModelField(IsASubModel)
+
+        data = {'first': {'first': 'somevalue'}}
+        instance = HasAModelField(data)
+        self.assertTrue(isinstance(instance.first, IsASubModel))
+        self.assertEqual(instance.first.first, data['first']['first'])
+
 if __name__ == "__main__":
     unittest.main()

@@ -48,3 +48,15 @@ class BooleanField(FieldBase):
         if isinstance(self.data, int):
             return self.data > 0
         return bool(self.data)
+
+
+class ModelField(FieldBase):
+    """Field containing a model instance"""
+
+    def __init__(self, wrapped_class, **kwargs):
+        self._wrapped_class = wrapped_class
+        FieldBase.__init__(self, **kwargs)
+
+    def to_python(self):
+        data = self.data or {}
+        return self._wrapped_class(data)
