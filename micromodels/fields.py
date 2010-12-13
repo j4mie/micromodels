@@ -53,13 +53,27 @@ class BooleanField(FieldBase):
         return bool(self.data)
 
 
-class ModelField(FieldBase):
-    """Field containing a model instance"""
+class WrappedObjectField(FieldBase):
+    """Superclass for any fields that wrap an object"""
 
     def __init__(self, wrapped_class, **kwargs):
         self._wrapped_class = wrapped_class
         FieldBase.__init__(self, **kwargs)
 
+
+class ModelField(WrappedObjectField):
+    """Field containing a model instance"""
+
     def to_python(self):
         data = self.data or {}
         return self._wrapped_class(data)
+
+
+class ModelCollectionField(WrappedObjectField):
+    """Field containing a list of model instances"""
+
+    def to_python(self):
+        data = self.data or []
+        return [self._wrapped_class(item) for item in data]
+
+

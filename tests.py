@@ -153,5 +153,35 @@ class ModelFieldTestCase(unittest.TestCase):
         self.assertTrue(isinstance(instance.first, IsASubModel))
         self.assertEqual(instance.first.first, data['first']['first'])
 
+
+class ModelCollectionFieldTestCase(unittest.TestCase):
+
+    def test_model_collection_field_creation(self):
+        class IsASubModel(micromodels.Model):
+            first = micromodels.CharField()
+
+        class HasAModelCollectionField(micromodels.Model):
+            first = micromodels.ModelCollectionField(IsASubModel)
+
+        data = {'first': [{'first': 'somevalue'}, {'first': 'anothervalue'}]}
+        instance = HasAModelCollectionField(data)
+        self.assertTrue(isinstance(instance.first, list))
+        for item in instance.first:
+            self.assertTrue(isinstance(item, IsASubModel))
+        self.assertEqual(instance.first[0].first, data['first'][0]['first'])
+        self.assertEqual(instance.first[1].first, data['first'][1]['first'])
+
+    def test_model_collection_field_with_no_elements(self):
+        class IsASubModel(micromodels.Model):
+            first = micromodels.CharField()
+
+        class HasAModelCollectionField(micromodels.Model):
+            first = micromodels.ModelCollectionField(IsASubModel)
+
+        data = {'first': []}
+        instance = HasAModelCollectionField(data)
+        self.assertEqual(instance.first, [])
+
+
 if __name__ == "__main__":
     unittest.main()
