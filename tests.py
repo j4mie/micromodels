@@ -128,5 +128,14 @@ class InstanceTestCase(unittest.TestCase):
         self.assertEqual(instance.third, data['third'])
         self.assertEqual(instance._data, data)
 
+    def test_custom_data_source(self):
+        class CustomSourceModel(micromodels.Model):
+            first = micromodels.CharField(source='custom_source')
+
+        data = {'custom_source': 'somevalue'}
+        instance = CustomSourceModel(data)
+
+        self.assertEqual(instance.first, data['custom_source'])
+
 if __name__ == "__main__":
     unittest.main()
