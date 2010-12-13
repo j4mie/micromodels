@@ -8,7 +8,7 @@ class SimpleModel(micromodels.Model):
 class ClassCreationTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.instance = SimpleModel()
+        self.instance = SimpleModel({})
 
     def test_class_created(self):
         """Model instance should be of type SimpleModel"""
@@ -107,6 +107,22 @@ class BooleanFieldTestCase(unittest.TestCase):
         self.assertEqual(self.field.to_python(), False)
         self.field.populate(100)
         self.assertEqual(self.field.to_python(), True)
+
+
+class ThreeFieldsModel(micromodels.Model):
+    first = micromodels.CharField()
+    second = micromodels.CharField()
+    third = micromodels.CharField()
+
+class InstanceTestCase(unittest.TestCase):
+
+    def test_basic_data(self):
+        data = {'first': 'firstvalue', 'second': 'secondvalue', 'third': 'thirdvalue'}
+        instance = ThreeFieldsModel(data)
+        self.assertEqual(instance.first, data['first'])
+        self.assertEqual(instance.second, data['second'])
+        self.assertEqual(instance.third, data['third'])
+        self.assertEqual(instance._data, data)
 
 if __name__ == "__main__":
     unittest.main()
