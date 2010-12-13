@@ -78,6 +78,7 @@ class IntegerFieldTestCase(unittest.TestCase):
         self.field.populate(None)
         self.assertEqual(self.field.to_python(), 0)
 
+
 class BooleanFieldTestCase(unittest.TestCase):
 
     def setUp(self):
