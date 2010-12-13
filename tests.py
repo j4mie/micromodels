@@ -1,18 +1,18 @@
 import unittest
 import micromodels
 
-class SimpleModel(micromodels.Model):
-    name = micromodels.CharField()
-    field_with_source = micromodels.CharField(source='foo')
-
 class ClassCreationTestCase(unittest.TestCase):
 
     def setUp(self):
+        class SimpleModel(micromodels.Model):
+            name = micromodels.CharField()
+            field_with_source = micromodels.CharField(source='foo')
+        self.model_class = SimpleModel
         self.instance = SimpleModel({})
 
     def test_class_created(self):
         """Model instance should be of type SimpleModel"""
-        self.assertTrue(isinstance(self.instance, SimpleModel))
+        self.assertTrue(isinstance(self.instance, self.model_class))
 
     def test_fields_created(self):
         """Model instance should have a property called _fields"""
@@ -30,6 +30,7 @@ class ClassCreationTestCase(unittest.TestCase):
         """Field with custom source specificied should have source property set correctly"""
         self.assertEqual(self.instance._fields['field_with_source'].source, 'foo')
 
+
 class FieldBaseTestCase(unittest.TestCase):
 
     def test_field_without_provided_source(self):
@@ -42,6 +43,7 @@ class FieldBaseTestCase(unittest.TestCase):
         """If a source parameter is provided, the field's source attribute should be set to the value of this parameter"""
         field = micromodels.fields.FieldBase(source='customsource')
         self.assertEqual(field.source, 'customsource')
+
 
 class CharFieldTestCase(unittest.TestCase):
 
@@ -56,6 +58,7 @@ class CharFieldTestCase(unittest.TestCase):
         """CharField should convert None to empty string"""
         self.field.populate(None)
         self.assertEqual(self.field.to_python(), '')
+
 
 class IntegerFieldTestCase(unittest.TestCase):
 
@@ -109,16 +112,17 @@ class BooleanFieldTestCase(unittest.TestCase):
         self.assertEqual(self.field.to_python(), True)
 
 
-class ThreeFieldsModel(micromodels.Model):
-    first = micromodels.CharField()
-    second = micromodels.CharField()
-    third = micromodels.CharField()
-
 class InstanceTestCase(unittest.TestCase):
 
     def test_basic_data(self):
+        class ThreeFieldsModel(micromodels.Model):
+            first = micromodels.CharField()
+            second = micromodels.CharField()
+            third = micromodels.CharField()
+
         data = {'first': 'firstvalue', 'second': 'secondvalue', 'third': 'thirdvalue'}
         instance = ThreeFieldsModel(data)
+
         self.assertEqual(instance.first, data['first'])
         self.assertEqual(instance.second, data['second'])
         self.assertEqual(instance.third, data['third'])
