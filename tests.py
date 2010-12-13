@@ -183,5 +183,19 @@ class ModelCollectionFieldTestCase(unittest.TestCase):
         self.assertEqual(instance.first, [])
 
 
+class FieldCollectionFieldTestCase(unittest.TestCase):
+
+    def test_field_collection_field_creation(self):
+        class HasAFieldCollectionField(micromodels.Model):
+            first = micromodels.FieldCollectionField(micromodels.CharField)
+
+        data = {'first': ['one', 'two', 'three']}
+        instance = HasAFieldCollectionField(data)
+        self.assertTrue(isinstance(instance.first, list))
+        self.assertTrue(len(data['first']), len(instance.first))
+        for index, value in enumerate(data['first']):
+            self.assertEqual(instance.first[index], value)
+
+
 if __name__ == "__main__":
     unittest.main()

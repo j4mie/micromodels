@@ -77,3 +77,15 @@ class ModelCollectionField(WrappedObjectField):
         return [self._wrapped_class(item) for item in data]
 
 
+class FieldCollectionField(WrappedObjectField):
+    """Field containing a list of fields"""
+
+    def to_python(self):
+        data = self.data or []
+        instances = []
+        for item in data:
+            field_instance = self._wrapped_class()
+            field_instance.populate(item)
+            instances.append(field_instance.to_python())
+        return instances
+
