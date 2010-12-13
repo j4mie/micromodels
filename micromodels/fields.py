@@ -16,6 +16,7 @@ class FieldBase(object):
         """Set the value or values wrapped by this field"""
         self.data = data
 
+
 class CharField(FieldBase):
     """Field to represent a simple Unicode string value"""
 
@@ -25,6 +26,7 @@ class CharField(FieldBase):
             return ''
         return unicode(self.data)
 
+
 class IntegerField(FieldBase):
     """Field to represent an integer value"""
 
@@ -33,6 +35,7 @@ class IntegerField(FieldBase):
         if self.data is None:
             return 0
         return int(self.data)
+
 
 class BooleanField(FieldBase):
     """Field to represent a boolean"""
