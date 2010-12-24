@@ -16,9 +16,14 @@ class TwitterUser(micromodels.Model):
 class Tweet(micromodels.Model):
     id = micromodels.IntegerField()
     text = micromodels.CharField()
+    created_at = micromodels.DateTimeField(format="%a %b %d %H:%M:%S +0000 %Y")
     user = micromodels.ModelField(TwitterUser)
 
 json_data = urlopen('http://api.twitter.com/1/statuses/show/20.json').read()
 tweet = Tweet(json.loads(json_data))
 
-print "Tweet was posted by %s (%s)" % (tweet.user.name, tweet.user.get_profile_url())
+print "Tweet was posted by %s (%s) on a %s" % (
+    tweet.user.name,
+    tweet.user.get_profile_url(),
+    tweet.created_at.strftime("%A")
+)
