@@ -1,3 +1,4 @@
+import datetime
 
 class FieldBase(object):
     """Base class for all field types"""
@@ -51,6 +52,19 @@ class BooleanField(FieldBase):
         if isinstance(self.data, int):
             return self.data > 0
         return bool(self.data)
+
+
+class DateTimeField(FieldBase):
+    """Field to represent a datetime"""
+
+    def __init__(self, format, **kwargs):
+        super(DateTimeField, self).__init__(**kwargs)
+        self.format = format
+
+    def to_python(self):
+        if self.data is None:
+            return None
+        return datetime.datetime.strptime(str(self.data), self.format)
 
 
 class WrappedObjectField(FieldBase):

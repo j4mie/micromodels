@@ -113,6 +113,21 @@ class BooleanFieldTestCase(unittest.TestCase):
         self.assertEqual(self.field.to_python(), True)
 
 
+class DateTimeFieldTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.format = "%a %b %d %H:%M:%S +0000 %Y"
+        self.datetimestring = "Tue Mar 21 20:50:14 +0000 2006"
+        self.field = micromodels.DateTimeField(format=self.format)
+
+    def test_format_conversion(self):
+        import datetime
+        self.field.populate(self.datetimestring)
+        converted = self.field.to_python()
+        self.assertTrue(isinstance(converted, datetime.datetime))
+        self.assertEqual(converted.strftime(self.format), self.datetimestring)
+
+
 class InstanceTestCase(unittest.TestCase):
 
     def test_basic_data(self):
