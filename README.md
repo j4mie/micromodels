@@ -11,7 +11,6 @@ Perfect for wrapping Python objects around JSON data returned from web-based API
 
     import micromodels
 
-
     class TwitterUser(micromodels.Model):
         id = micromodels.IntegerField()
         screen_name = micromodels.CharField()
@@ -29,8 +28,8 @@ Perfect for wrapping Python objects around JSON data returned from web-based API
         user = micromodels.ModelField(TwitterUser)
 
 
-    json_data = urlopen('http://api.twitter.com/1/statuses/show/20.json').read()
-    tweet = Tweet(json.loads(json_data))
+    json_data = urlopen('http://api.twitter.com/1/statuses/show/20.json')
+    tweet = Tweet(json.load(json_data))
 
     print "Tweet was posted by %s (%s) on a %s" % (
         tweet.user.name,
