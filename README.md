@@ -4,7 +4,30 @@ A simple library for building read-only model classes based on dictionaries of d
 
 Perfect for wrapping Python objects around JSON data returned from web-based APIs.
 
-## Example
+## Really simple example
+
+    import micromodels
+
+    class Author(micromodels.Model):
+        first_name = micromodels.CharField()
+        last_name = micromodels.CharField()
+        date_of_birth = micromodels.DateField(format="%Y-%m-%d")
+
+        @property
+        def full_name(self):
+            return "%s %s" % (self.first_name, self.last_name)
+
+
+    douglas_data = {
+        "first_name": "Douglas",
+        "last_name": "Adams",
+        "date_of_birth": "1952-03-11",
+    }
+
+    douglas = Author(douglas_data)
+    print "%s was born in %s" % (douglas.full_name, douglas.date_of_birth.strftime("%Y"))
+
+## Slightly more complex example
 
     import json
     from urllib2 import urlopen
