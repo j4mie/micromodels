@@ -121,6 +121,27 @@ Converts its supplied data to a Python `datetime.date` object using the format g
 
 Converts its supplied data to a Python `datetime.time` object using the format given in the required `format` argument (see `DateTimeField` for details).
 
+#### FieldCollectionField
+
+Use this field when your source data dictionary contains a list of items of the same type. It takes a single required argument, which is the field type that should be used to convert each item in the list. For example:
+
+    some_data = {
+        'first_list': [0, 34, 42],
+        'second_list': ['first_item', 'second_item', 'third_item'],
+    }
+
+    class MyModel(micromodels.Model):
+        first_list = micromodels.FieldCollectionField(micromodels.IntegerField)
+        second_list = micromodels.FieldCollectionField(micromodels.CharField)
+
+    >>> m = MyModel(some_data)
+    >>> len(m.first_list), len(m.second_list)
+    (3, 3)
+    >>> m.first_list
+    [0, 34, 42]
+    >>> m.second_list
+    [u'first_item', u'second_item', u'third_item']
+
 #### ModelField
 
 Use this field when you wish to nest one object inside another. It takes a single required argument, which is the nested class. For example, given the following dictionary:
@@ -178,27 +199,6 @@ Use this field when your source data dictionary contains a list of dictionaries.
     u'First value'
     >>> [item.value for item in m.list]
     [u'First value', u'Second value', u'Third value']
-
-#### FieldCollectionField
-
-Use this field when your source data dictionary contains a list of items of the same type. It takes a single required argument, which is the field type that should be used to convert each item in the list. For example:
-
-    some_data = {
-        'first_list': [0, 34, 42],
-        'second_list': ['first_item', 'second_item', 'third_item'],
-    }
-
-    class MyModel(micromodels.Model):
-        first_list = micromodels.FieldCollectionField(micromodels.IntegerField)
-        second_list = micromodels.FieldCollectionField(micromodels.CharField)
-
-    >>> m = MyModel(some_data)
-    >>> len(m.first_list), len(m.second_list)
-    (3, 3)
-    >>> m.first_list
-    [0, 34, 42]
-    >>> m.second_list
-    [u'first_item', u'second_item', u'third_item']
 
 
 ## (Un)license
