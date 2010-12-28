@@ -60,6 +60,33 @@ Perfect for wrapping Python objects around JSON data returned from web-based API
         tweet.created_at.strftime("%A")
     )
 
+
+## Field reference
+
+### Field options
+
+The following optional argument is available for all field types.
+
+#### `source`
+
+By default, a model class will look for a key in its source data with the same name as each of its fields. For example:
+
+    class ExampleModel(micromodels.Model):
+        myfield = micromodels.CharField()
+
+    e = ExampleModel({'myfield': 'Some Value'})
+    print e.myfield # prints 'Some Value'
+
+If you wish to change this, you can pass the 'source' argument to each field instance:
+
+    class ExampleModel(micromodels.Model):
+        myfield = micromodels.CharField()
+        anotherfield = micromodels.CharField(source='some_other_field')
+
+    e = ExampleModel({'myfield': 'Some Value', 'some_other_field': 'Another Value'})
+    print e.anotherfield # prints 'Another Value'
+
+
 ## (Un)license
 
 This is free and unencumbered software released into the public domain.
