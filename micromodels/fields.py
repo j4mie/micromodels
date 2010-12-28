@@ -119,10 +119,10 @@ class FieldCollectionField(WrappedObjectField):
 
     def to_python(self):
         data = self.data or []
-        instances = []
+        converted = []
         for item in data:
             field_instance = self._wrapped_class()
             field_instance.populate(item)
-            instances.append(field_instance.to_python())
-        return instances
+            converted.append(field_instance.to_python())
+        return converted
 
