@@ -15,7 +15,7 @@ def get_long_description():
     return read_from(rel_file('README.md'))
 
 def get_version():
-    data = read_from(rel_file('micromodels/__init__.py'))
+    data = read_from(rel_file('micromodels', '__init__.py'))
     return re.search(r"__version__ = '([^']+)'", data).group(1)
 
 setup(
