@@ -166,7 +166,6 @@ Use this field when your source data dictionary contains a list of dictionaries.
     class MyNestedModel(micromodels.Model):
         value = micromodels.CharField()
 
-
     class MyMainModel(micromodels.Model):
         list = micromodels.ModelCollectionField(MyNestedModel)
 
