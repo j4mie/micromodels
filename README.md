@@ -123,7 +123,7 @@ Converts its supplied data to a Python `datetime.time` object using the format g
 
 #### ModelField
 
-Use this field when you wish to nest one object inside another. For example, given the following dictionary:
+Use this field when you wish to nest one object inside another. It takes a single required argument, which is the nested class. For example, given the following dictionary:
 
     some_data = {
         'first_item': 'Some value',
@@ -153,7 +153,7 @@ Then you can access the data as follows:
 
 #### ModelCollectionField
 
-Use this field when your source data dictionary contains a list of dictionaries. For example:
+Use this field when your source data dictionary contains a list of dictionaries. It takes a single required argument, which is the name of the nested class that each item in the list should be converted to. For example:
 
     some_data = {
         'list': [
@@ -181,7 +181,7 @@ Use this field when your source data dictionary contains a list of dictionaries.
 
 #### FieldCollectionField
 
-Use this field when your source data dictionary contains a list of items of the same type. For example:
+Use this field when your source data dictionary contains a list of items of the same type. It takes a single required argument, which is the field type that should be used to convert each item in the list. For example:
 
     some_data = {
         'first_list': [0, 34, 42],
