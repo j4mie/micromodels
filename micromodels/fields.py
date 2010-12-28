@@ -18,6 +18,13 @@ class FieldBase(object):
         self.data = data
 
 
+class PassField(FieldBase):
+    """Field that just passes through the data"""
+
+    def to_python(self):
+        return self.data
+
+
 class CharField(FieldBase):
     """Field to represent a simple Unicode string value"""
 

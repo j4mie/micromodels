@@ -45,6 +45,17 @@ class FieldBaseTestCase(unittest.TestCase):
         self.assertEqual(field.source, 'customsource')
 
 
+class PassFieldTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.field = micromodels.PassField()
+
+    def test_pass_field(self):
+        data = ('some', 'data', 42)
+        self.field.populate(data)
+        self.assertEqual(self.field.to_python(), data)
+
+
 class CharFieldTestCase(unittest.TestCase):
 
     def setUp(self):

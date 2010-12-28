@@ -1,3 +1,3 @@
 from models import Model
-from fields import CharField, IntegerField, BooleanField, DateTimeField, DateField, \
+from fields import PassField, CharField, IntegerField, BooleanField, DateTimeField, DateField, \
                    TimeField, ModelField, ModelCollectionField, FieldCollectionField
