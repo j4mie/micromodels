@@ -102,27 +102,23 @@ class ModelField(WrappedObjectField):
     """Field containing a model instance"""
 
     def to_python(self):
-        data = self.data or {}
-        return self._wrapped_class(data)
+        return self._wrapped_class(self.data or {})
 
 
 class ModelCollectionField(WrappedObjectField):
     """Field containing a list of model instances"""
 
     def to_python(self):
-        data = self.data or []
-        return [self._wrapped_class(item) for item in data]
+        return [self._wrapped_class(item) for item in self.data or []]
 
 
 class FieldCollectionField(WrappedObjectField):
     """Field containing a list of fields"""
 
     def to_python(self):
-        data = self.data or []
-        converted = []
-        for item in data:
+        def convert(item):
             field_instance = self._wrapped_class()
             field_instance.populate(item)
-            converted.append(field_instance.to_python())
-        return converted
+            return field_instance.to_python()
+        return [convert(item) for item in self.data or []]
 
