@@ -74,8 +74,9 @@ By default, a model class will look for a key in its source data with the same n
     class ExampleModel(micromodels.Model):
         myfield = micromodels.CharField()
 
-    e = ExampleModel({'myfield': 'Some Value'})
-    print e.myfield # prints 'Some Value'
+    >>> e = ExampleModel({'myfield': 'Some Value'})
+    >>> e.myfield
+    u'Some Value'
 
 If you wish to change this, you can pass the 'source' argument to each field instance:
 
@@ -83,8 +84,9 @@ If you wish to change this, you can pass the 'source' argument to each field ins
         myfield = micromodels.CharField()
         anotherfield = micromodels.CharField(source='some_other_field')
 
-    e = ExampleModel({'myfield': 'Some Value', 'some_other_field': 'Another Value'})
-    print e.anotherfield # prints 'Another Value'
+    >>> e = ExampleModel({'myfield': 'Some Value', 'some_other_field': 'Another Value'})
+    >>> e.anotherfield
+    u'Another Value'
 
 ### Field types
 
