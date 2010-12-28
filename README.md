@@ -2,7 +2,7 @@
 
 A simple library for building read-only model classes based on dictionaries of data.
 
-Perfect for wrapping Python objects around JSON data returned from web-based APIs.
+Perfect for (amongst other things) wrapping Python objects around JSON data returned from web-based APIs.
 
 ## Really simple example
 
