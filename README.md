@@ -86,6 +86,119 @@ If you wish to change this, you can pass the 'source' argument to each field ins
     e = ExampleModel({'myfield': 'Some Value', 'some_other_field': 'Another Value'})
     print e.anotherfield # prints 'Another Value'
 
+### Field types
+
+#### PassField
+
+The simplest type of field - this simply passes through whatever is in the data dictionary without changing it at all.
+
+#### CharField
+
+A field for string data. **Will attempt to convert its supplied data to Unicode.**
+
+#### IntegerField
+
+Attempts to convert its supplied data to an integer.
+
+#### BooleanField
+
+Attempts to convert its supplied data to a boolean. If the data is a string, `"true"` (case insensitive) will be converted to `True` and all other strings will be converted to `False`. If the supplied data is an integer, positive numbers will become `True` and negative numbers or zero will become `False`.
+
+#### DateTimeField
+
+Converts its supplied data to a Python `datetime.datetime` object using the format given in the required `format` argument. See [the Python documentation](http://docs.python.org/library/datetime.html#strftime-strptime-behavior) for details of the format string. For example:
+
+    class MyModel(micromodels.Model):
+        created_at = micromodels.DateTimeField(format="%a %b %d %H:%M:%S +0000 %Y")
+
+#### DateField
+
+Converts its supplied data to a Python `datetime.date` object using the format given in the required `format` argument (see `DateTimeField` for details).
+
+#### TimeField
+
+Converts its supplied data to a Python `datetime.time` object using the format given in the required `format` argument (see `DateTimeField` for details).
+
+#### ModelField
+
+Use this field when you wish to nest one object inside another. For example, given the following dictionary:
+
+    some_data = {
+        'first_item': 'Some value',
+        'second_item': {
+            'nested_item': 'Some nested value',
+        },
+    }
+
+You could build the following classes (note that you have to define the inner nested models first):
+
+    class MyNestedModel(micromodels.Model):
+        nested_item = micromodels.CharField()
+
+    class MyMainModel(micromodels.Model):
+        first_item = micromodels.CharField()
+        second_item = micromodels.ModelField(MyNestedModel) # pass the class of the nested model
+
+Then you can access the data as follows:
+
+    >>> m = MyMainModel(some_data)
+    >>> m.first_item
+    u'Some value'
+    >>> m.second_item.__class__.__name__
+    'MyNestedModel'
+    >>> m.second_item.nested_item
+    u'Some nested value'
+
+#### ModelCollectionField
+
+Use this field when your source data dictionary contains a list of dictionaries. For example:
+
+    some_data = {
+        'list': [
+            {'value': 'First value'},
+            {'value': 'Second value'},
+            {'value': 'Third value'},
+        ]
+    }
+
+    class MyNestedModel(micromodels.Model):
+        value = micromodels.CharField()
+
+
+    class MyMainModel(micromodels.Model):
+        list = micromodels.ModelCollectionField(MyNestedModel)
+
+    >>> m = MyMainModel(some_data)
+    >>> len(m.list)
+    3
+    >>> m.list[0].__class__.__name__
+    'MyNestedModel'
+    >>> m.list[0].value
+    u'First value'
+    >>> [item.value for item in m.list]
+    [u'First value', u'Second value', u'Third value']
+
+#### FieldCollectionField
+
+Use this field when your source data dictionary contains a list of items of the same type. For example:
+
+    some_data = {
+        'first_list': [0, 34, 42],
+        'second_list': ['first_item', 'second_item', 'third_item'],
+    }
+
+    class MyModel(micromodels.Model):
+        first_list = micromodels.FieldCollectionField(micromodels.IntegerField)
+        second_list = micromodels.FieldCollectionField(micromodels.CharField)
+
+    >>> m = MyModel(some_data)
+    >>> len(m.first_list), len(m.second_list)
+    (3, 3)
+    >>> m.first_list
+    [0, 34, 42]
+    >>> m.second_list
+    [u'first_item', u'second_item', u'third_item']
+
 
 ## (Un)license
 
