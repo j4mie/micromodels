@@ -143,6 +143,21 @@ class DateFieldTestCase(unittest.TestCase):
         self.assertEqual(converted.strftime(self.format), self.datestring)
 
 
+class TimeFieldTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.format = "%H:%M:%S"
+        self.timestring = "09:33:30"
+        self.field = micromodels.TimeField(format=self.format)
+
+    def test_format_conversion(self):
+        import datetime
+        self.field.populate(self.timestring)
+        converted = self.field.to_python()
+        self.assertTrue(isinstance(converted, datetime.time))
+        self.assertEqual(converted.strftime(self.format), self.timestring)
+
+
 class InstanceTestCase(unittest.TestCase):
 
     def test_basic_data(self):
