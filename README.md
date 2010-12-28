@@ -4,6 +4,10 @@ A simple library for building read-only model classes based on dictionaries of d
 
 Perfect for (amongst other things) wrapping Python objects around JSON data returned from web-based APIs.
 
+## Installation
+
+    pip install micromodels
+
 ## Really simple example
 
     import micromodels
