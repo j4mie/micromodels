@@ -135,8 +135,6 @@ Use this field when your source data dictionary contains a list of items of the 
         second_list = micromodels.FieldCollectionField(micromodels.CharField)
 
     >>> m = MyModel(some_data)
-    >>> len(m.first_list), len(m.second_list)
-    (3, 3)
     >>> m.first_list
     [0, 34, 42]
     >>> m.second_list
