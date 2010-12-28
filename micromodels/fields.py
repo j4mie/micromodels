@@ -67,6 +67,14 @@ class DateTimeField(FieldBase):
         return datetime.datetime.strptime(str(self.data), self.format)
 
 
+class DateField(DateTimeField):
+    """Field to represent a datetime.date"""
+
+    def to_python(self):
+        datetime = super(DateField, self).to_python()
+        return datetime.date()
+
+
 class WrappedObjectField(FieldBase):
     """Superclass for any fields that wrap an object"""
 

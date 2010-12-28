@@ -128,6 +128,21 @@ class DateTimeFieldTestCase(unittest.TestCase):
         self.assertEqual(converted.strftime(self.format), self.datetimestring)
 
 
+class DateFieldTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.format = "%Y-%m-%d"
+        self.datestring = "2010-12-28"
+        self.field = micromodels.DateField(format=self.format)
+
+    def test_format_conversion(self):
+        import datetime
+        self.field.populate(self.datestring)
+        converted = self.field.to_python()
+        self.assertTrue(isinstance(converted, datetime.date))
+        self.assertEqual(converted.strftime(self.format), self.datestring)
+
+
 class InstanceTestCase(unittest.TestCase):
 
     def test_basic_data(self):
