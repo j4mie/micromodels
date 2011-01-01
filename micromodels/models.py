@@ -4,11 +4,10 @@ class Model(object):
 
     class __metaclass__(type):
         def __init__(cls, name, bases, attrs):
-            fields = {}
+            cls._fields = {}
             for name, value in attrs.items():
                 if isinstance(value, FieldBase):
-                    fields[name] = value
-            setattr(cls, '_fields', fields)
+                    cls._fields[name] = value
 
     def __init__(self, data):
         """Create an instance of the model subclass. The constructor should
