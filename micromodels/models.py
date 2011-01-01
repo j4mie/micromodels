@@ -1,3 +1,8 @@
+try:
+	import json
+except:
+	import simplejson as json
+
 from fields import FieldBase
 
 class Model(object):
@@ -23,3 +28,7 @@ class Model(object):
             value = field.to_python()
             setattr(self, name, value)
         self._data = data
+
+    @property
+    def json(self):
+	return json.dumps(self._data)
