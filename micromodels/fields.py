@@ -12,12 +12,6 @@ class FieldBase(object):
         instance is assigned to will be used.
         """
         self.source = source
-        self._cache = None
-
-    def get(self):
-        if not self._cache:
-            self._cache = self.to_python()
-        return self._cache
 
     def populate(self, data):
         """Set the value or values wrapped by this field"""
