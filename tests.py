@@ -183,7 +183,6 @@ class InstanceTestCase(unittest.TestCase):
         self.assertEqual(instance.first, data['first'])
         self.assertEqual(instance.second, data['second'])
         self.assertEqual(instance.third, data['third'])
-        self.assertEqual(instance._data, data)
 
     def test_custom_data_source(self):
         class CustomSourceModel(micromodels.Model):
