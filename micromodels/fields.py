@@ -20,6 +20,9 @@ class FieldBase(object):
     def to_python(self):
         return self.data
 
+    @staticmethod
+    def to_serial(data):
+        return data
 
 class PassField(FieldBase):
     pass
@@ -64,15 +67,20 @@ class BooleanField(FieldBase):
 class DateTimeField(FieldBase):
     """Field to represent a datetime"""
 
-    def __init__(self, format, **kwargs):
+    def __init__(self, format, serial_format=None, **kwargs):
         super(DateTimeField, self).__init__(**kwargs)
         self.format = format
+        self.serial_format = serial_format
 
     def to_python(self):
         if self.data is None:
             return None
         return datetime.datetime.strptime(str(self.data), self.format)
 
+    def to_serial(self, time_obj):
+        if not self.serial_format:
+            return time_obj.isoformat()
+        return time_obj.strftime(self.serial_format)
 
 class DateField(DateTimeField):
     """Field to represent a datetime.date"""

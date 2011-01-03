@@ -275,6 +275,17 @@ class JSONModelTestCase(unittest.TestCase):
         self.assertEqual(micromodels.models.json.loads(instance.to_json())['name'],
                          'John')
 
+    def test_json_model_type_change_serialization(self):
+        class Event(micromodels.JSONModel):
+            time = micromodels.DateField(format="%Y-%m-%d")
+
+        data = {'time': '2000-10-31'}
+        json_data = micromodels.models.json.dumps(data)
+
+        instance = Event(json_data)
+        output = instance.to_dict(serial=True)
+        self.assertEqual(output['time'], instance.time.isoformat())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -31,9 +31,15 @@ class JSONModel(Model):
     def __init__(self, json_data):
         super(JSONModel, self).__init__(json.loads(json_data))
 
+    def to_dict(self, serial=False):
+        keys = (k for k in self.__dict__.keys() if k in self._fields.keys())
+
+        if serial:
+            D = dict((key, self._fields[key].to_serial(getattr(self, key)))
+                     for key in keys)
+        else:
+            D = dict((key, getattr(self, key)) for key in keys)
+        return D
+
     def to_json(self):
-        D = {}
-        for key, value in self.__dict__.iteritems():
-            if key in self.__class__._fields:
-                D[key] = value #make hook for deserialization later and multimodel fields
-        return json.dumps(D)
+        return json.dumps(self.to_dict(serial=True))
