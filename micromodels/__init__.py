@@ -1,4 +1,4 @@
-from models import Model
+from models import Model, JSONModel
 from fields import PassField, CharField, IntegerField, BooleanField, DateTimeField, DateField, \
                    TimeField, ModelField, ModelCollectionField, FieldCollectionField
 

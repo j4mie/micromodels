@@ -8,7 +8,6 @@ from fields import FieldBase
 class Model(object):
 
     class __metaclass__(type):
-
         def __init__(cls, name, bases, attrs):
             cls._fields = {}
             for key, value in attrs.iteritems():
@@ -36,5 +35,5 @@ class JSONModel(Model):
         D = {}
         for key, value in self.__dict__.iteritems():
             if key in self.__class__._fields:
-                D[key] = value #make hook for deserialization later
+                D[key] = value #make hook for deserialization later and multimodel fields
         return json.dumps(D)

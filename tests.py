@@ -251,6 +251,30 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
         for index, value in enumerate(data['first']):
             self.assertEqual(instance.first[index], value)
 
+class JSONModelTestCase(unittest.TestCase):
+
+    def setUp(self):
+        class Person(micromodels.JSONModel):
+            name = micromodels.CharField()
+            age = micromodels.IntegerField()
+
+        self.Person = Person
+        self.data = {'name': 'Eric', 'age': 18}
+        self.json_data = micromodels.models.json.dumps(self.data)
+
+    def test_json_model_creation(self):
+        instance = self.Person(self.json_data)
+        self.assertTrue(isinstance(instance, micromodels.JSONModel))
+        self.assertEqual(instance.name, self.data['name'])
+        self.assertEqual(instance.age, self.data['age'])
+
+    def test_json_model_reserialization(self):
+        instance = self.Person(self.json_data)
+        self.assertEqual(instance.to_json(), self.json_data)
+        instance.name = 'John'
+        self.assertEqual(micromodels.models.json.loads(instance.to_json())['name'],
+                         'John')
+
 
 if __name__ == "__main__":
     unittest.main()
