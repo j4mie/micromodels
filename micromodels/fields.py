@@ -113,6 +113,9 @@ class ModelField(WrappedObjectField):
         data = self.data or {}
         return self._wrapped_class(data)
 
+    def to_serial(self, model_instance):
+        return model_instance.to_dict(serial=True)
+
 
 class ModelCollectionField(WrappedObjectField):
     """Field containing a list of model instances"""
@@ -120,6 +123,9 @@ class ModelCollectionField(WrappedObjectField):
     def to_python(self):
         data = self.data or []
         return [self._wrapped_class(item) for item in data]
+
+    def to_serial(self, model_instances):
+        return [instance.to_dict(serial=True) for instance in model_instances]
 
 
 class FieldCollectionField(WrappedObjectField):
@@ -134,3 +140,5 @@ class FieldCollectionField(WrappedObjectField):
             converted.append(field_instance.to_python())
         return converted
 
+    def to_serial(self, list_of_fields):
+        return [self._wrapped_class.to_serial(data) for data in list_of_fields]

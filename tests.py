@@ -1,5 +1,6 @@
 import unittest
 import micromodels
+from micromodels.models import json
 
 class ClassCreationTestCase(unittest.TestCase):
 
@@ -208,6 +209,17 @@ class ModelFieldTestCase(unittest.TestCase):
         self.assertTrue(isinstance(instance.first, IsASubModel))
         self.assertEqual(instance.first.first, data['first']['first'])
 
+    def test_model_field_to_serial(self):
+        class User(micromodels.JSONModel):
+            name = micromodels.CharField()
+
+        class Post(micromodels.JSONModel):
+            title = micromodels.CharField()
+            author = micromodels.ModelField(User)
+
+        data = {'title': 'Test Post', 'author': {'name': 'Eric Martin'}}
+        post = Post(data)
+        self.assertEqual(post.to_dict(serial=True), data)
 
 class ModelCollectionFieldTestCase(unittest.TestCase):
 
@@ -237,6 +249,25 @@ class ModelCollectionFieldTestCase(unittest.TestCase):
         instance = HasAModelCollectionField(data)
         self.assertEqual(instance.first, [])
 
+    def test_model_collection_to_serial(self):
+        class Post(micromodels.JSONModel):
+            title = micromodels.CharField()
+
+        class User(micromodels.JSONModel):
+            name = micromodels.CharField()
+            posts = micromodels.ModelCollectionField(Post)
+
+        data = {
+                'name': 'Eric Martin',
+                'posts': [
+                            {'title': 'Post #1'},
+                            {'title': 'Post #2'}
+                ]
+        }
+
+        eric = User(data)
+        processed = eric.to_dict(serial=True)
+        self.assertEqual(processed, data)
 
 class FieldCollectionFieldTestCase(unittest.TestCase):
 
@@ -251,6 +282,14 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
         for index, value in enumerate(data['first']):
             self.assertEqual(instance.first[index], value)
 
+    def test_field_collection_field_to_serial(self):
+        class Person(micromodels.JSONModel):
+            aliases = micromodels.FieldCollectionField(micromodels.CharField)
+
+        data = {'aliases': ['Joe', 'John', 'Bob']}
+        p = Person(data)
+        self.assertEqual(p.to_dict(serial=True), data)
+
 class JSONModelTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -260,19 +299,19 @@ class JSONModelTestCase(unittest.TestCase):
 
         self.Person = Person
         self.data = {'name': 'Eric', 'age': 18}
-        self.json_data = micromodels.models.json.dumps(self.data)
+        self.json_data = json.dumps(self.data)
 
     def test_json_model_creation(self):
-        instance = self.Person(self.json_data)
+        instance = self.Person(self.json_data, is_json=True)
         self.assertTrue(isinstance(instance, micromodels.JSONModel))
         self.assertEqual(instance.name, self.data['name'])
         self.assertEqual(instance.age, self.data['age'])
 
     def test_json_model_reserialization(self):
-        instance = self.Person(self.json_data)
+        instance = self.Person(self.json_data, is_json=True)
         self.assertEqual(instance.to_json(), self.json_data)
         instance.name = 'John'
-        self.assertEqual(micromodels.models.json.loads(instance.to_json())['name'],
+        self.assertEqual(json.loads(instance.to_json())['name'],
                          'John')
 
     def test_json_model_type_change_serialization(self):
@@ -280,11 +319,13 @@ class JSONModelTestCase(unittest.TestCase):
             time = micromodels.DateField(format="%Y-%m-%d")
 
         data = {'time': '2000-10-31'}
-        json_data = micromodels.models.json.dumps(data)
+        json_data = json.dumps(data)
 
-        instance = Event(json_data)
+        instance = Event(json_data, is_json=True)
         output = instance.to_dict(serial=True)
         self.assertEqual(output['time'], instance.time.isoformat())
+        self.assertEqual(json.loads(instance.to_json())['time'],
+                         instance.time.isoformat())
 
 
 if __name__ == "__main__":
