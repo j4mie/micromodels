@@ -17,33 +17,21 @@ class Model(object):
                 if isinstance(value, FieldBase):
                     cls._fields[key] = value
 
-    def __init__(self, data):
-        """Create an instance of the model subclass. The constructor should
-        be passed a dictionary of data to provide values for its fields.
+    def __init__(self, data, is_json=False):
+        """Create an instance of the Model class. The constructor should
+        be passed a dictionary of data to provide values for its fields. If
+        is_json is set to True, the method will attempt to deserialize the JSON
+        string.
 
         For each field defined on the class, a property is created on the
         instance which contains the converted value from the source data.
         """
+        if is_json:
+            data = json.loads(data)
         for name, field in self._fields.iteritems():
             key = field.source or name
             field.populate(data.get(key))
             setattr(self, name, field.to_python())
-
-class JSONModel(Model):
-    '''The JSONModel subclasses Model and provides the ability to modify,
-    process, and output form data as a Python dictionary or a JSON string.
-    '''
-
-    def __init__(self, data, is_json=False):
-        '''Creates a JSONModel from data. To construct the instance from a json
-        string, the is_json keyword argument must be True. Construction from a
-        normal Python dictionary is support if is_json is set to false. The
-        default is False for is_json to not break compatibility with the normal
-        Model class.
-        '''
-        if is_json:
-            data = json.loads(data)
-        super(JSONModel, self).__init__(data)
 
     def to_dict(self, serial=False):
         '''Creates a datastructure representing the Model data. If serial is set

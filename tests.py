@@ -210,10 +210,10 @@ class ModelFieldTestCase(unittest.TestCase):
         self.assertEqual(instance.first.first, data['first']['first'])
 
     def test_model_field_to_serial(self):
-        class User(micromodels.JSONModel):
+        class User(micromodels.Model):
             name = micromodels.CharField()
 
-        class Post(micromodels.JSONModel):
+        class Post(micromodels.Model):
             title = micromodels.CharField()
             author = micromodels.ModelField(User)
 
@@ -250,10 +250,10 @@ class ModelCollectionFieldTestCase(unittest.TestCase):
         self.assertEqual(instance.first, [])
 
     def test_model_collection_to_serial(self):
-        class Post(micromodels.JSONModel):
+        class Post(micromodels.Model):
             title = micromodels.CharField()
 
-        class User(micromodels.JSONModel):
+        class User(micromodels.Model):
             name = micromodels.CharField()
             posts = micromodels.ModelCollectionField(Post)
 
@@ -283,7 +283,7 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
             self.assertEqual(instance.first[index], value)
 
     def test_field_collection_field_to_serial(self):
-        class Person(micromodels.JSONModel):
+        class Person(micromodels.Model):
             aliases = micromodels.FieldCollectionField(micromodels.CharField)
 
         data = {'aliases': ['Joe', 'John', 'Bob']}
@@ -293,7 +293,7 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
 class JSONModelTestCase(unittest.TestCase):
 
     def setUp(self):
-        class Person(micromodels.JSONModel):
+        class Person(micromodels.Model):
             name = micromodels.CharField()
             age = micromodels.IntegerField()
 
@@ -303,7 +303,7 @@ class JSONModelTestCase(unittest.TestCase):
 
     def test_json_model_creation(self):
         instance = self.Person(self.json_data, is_json=True)
-        self.assertTrue(isinstance(instance, micromodels.JSONModel))
+        self.assertTrue(isinstance(instance, micromodels.Model))
         self.assertEqual(instance.name, self.data['name'])
         self.assertEqual(instance.age, self.data['age'])
 
@@ -315,7 +315,7 @@ class JSONModelTestCase(unittest.TestCase):
                          'John')
 
     def test_json_model_type_change_serialization(self):
-        class Event(micromodels.JSONModel):
+        class Event(micromodels.Model):
             time = micromodels.DateField(format="%Y-%m-%d")
 
         data = {'time': '2000-10-31'}
