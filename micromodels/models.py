@@ -12,10 +12,10 @@ class Model(object):
         is to move all of fields into the _fields variable on the class.
         '''
         def __init__(cls, name, bases, attrs):
-            cls._fields = {}
+            cls._clsfields = {}
             for key, value in attrs.iteritems():
                 if isinstance(value, FieldBase):
-                    cls._fields[key] = value
+                    cls._clsfields[key] = value
 
     def __init__(self, data, is_json=False):
         """Create an instance of the Model class. The constructor should
@@ -26,12 +26,25 @@ class Model(object):
         For each field defined on the class, a property is created on the
         instance which contains the converted value from the source data.
         """
+        self._extra = {}
         if is_json:
             data = json.loads(data)
-        for name, field in self._fields.iteritems():
+        for name, field in self._clsfields.iteritems():
             key = field.source or name
             field.populate(data.get(key))
             setattr(self, name, field.to_python())
+
+    @property
+    def _fields(self):
+        return dict(self._clsfields, **self._extra)
+
+    def add_field(self, key, value, field):
+        '''This method adds a field to an existing Model instance. The field
+        instance must be passed so that the field can be properly serialized.
+        '''
+        field.populate(value)
+        setattr(self, key, field.to_python())
+        self._extra[key] = field
 
     def to_dict(self, serial=False):
         '''Creates a datastructure representing the Model data. If serial is set

@@ -1,5 +1,6 @@
 import unittest
 import micromodels
+from micromodels.fields import CharField
 from micromodels.models import json
 
 class ClassCreationTestCase(unittest.TestCase):
@@ -290,7 +291,7 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
         p = Person(data)
         self.assertEqual(p.to_dict(serial=True), data)
 
-class JSONModelTestCase(unittest.TestCase):
+class ModelTestCase(unittest.TestCase):
 
     def setUp(self):
         class Person(micromodels.Model):
@@ -301,20 +302,20 @@ class JSONModelTestCase(unittest.TestCase):
         self.data = {'name': 'Eric', 'age': 18}
         self.json_data = json.dumps(self.data)
 
-    def test_json_model_creation(self):
+    def test_model_creation(self):
         instance = self.Person(self.json_data, is_json=True)
         self.assertTrue(isinstance(instance, micromodels.Model))
         self.assertEqual(instance.name, self.data['name'])
         self.assertEqual(instance.age, self.data['age'])
 
-    def test_json_model_reserialization(self):
+    def test_model_reserialization(self):
         instance = self.Person(self.json_data, is_json=True)
         self.assertEqual(instance.to_json(), self.json_data)
         instance.name = 'John'
         self.assertEqual(json.loads(instance.to_json())['name'],
                          'John')
 
-    def test_json_model_type_change_serialization(self):
+    def test_model_type_change_serialization(self):
         class Event(micromodels.Model):
             time = micromodels.DateField(format="%Y-%m-%d")
 
@@ -326,6 +327,12 @@ class JSONModelTestCase(unittest.TestCase):
         self.assertEqual(output['time'], instance.time.isoformat())
         self.assertEqual(json.loads(instance.to_json())['time'],
                          instance.time.isoformat())
+
+    def test_model_add_field(self):
+        obj = self.Person(self.data)
+        obj.add_field('gender', 'male', micromodels.CharField())
+        self.assertEqual(obj.gender, 'male')
+        self.assertEqual(obj.to_dict(), dict(self.data, gender='male'))
 
 
 if __name__ == "__main__":
