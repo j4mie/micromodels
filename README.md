@@ -55,7 +55,7 @@ Perfect for (amongst other things) wrapping Python objects around JSON data retu
         user = micromodels.ModelField(TwitterUser)
 
 
-    json_data = urlopen('http://api.twitter.com/1/statuses/show/20.json')
+    json_data = urlopen('http://api.twitter.com/1/statuses/show/20.json').read()
     tweet = Tweet(json_data, is_json=True)
 
     print tweet.user.name
@@ -63,21 +63,20 @@ Perfect for (amongst other things) wrapping Python objects around JSON data retu
     print tweet.id
     print tweet.created_at.strftime('%A')
 
-    #the data can be cast to a dict (still containing time object)
-    tweet.to_dict()
-
-    #it can also be cast to JSON (fields handle their own serialization)
-    tweet.to_json()
-
-    #tweet.to_json() is equivalent to this call
-    import json
-    json.dumps(tweet.to_dict(serial=True))
-
     #new fields can also be added to the model instance
     #a method needs to be used to do this to handle serialization
 
     tweet.add_field('retweet_count', 44, micromodels.IntegerField())
     print tweet.retweet_count
+
+    #the data can be cast to a dict (still containing time object)
+    print tweet.to_dict()
+
+    #it can also be cast to JSON (fields handle their own serialization)
+    print tweet.to_json()
+
+    #tweet.to_json() is equivalent to this call
+    json.dumps(tweet.to_dict(serial=True))
 
 
 ## Field reference
