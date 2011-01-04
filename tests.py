@@ -33,29 +33,18 @@ class ClassCreationTestCase(unittest.TestCase):
         self.assertEqual(self.instance._fields['field_with_source'].source, 'foo')
 
 
-class FieldBaseTestCase(unittest.TestCase):
+class BaseFieldTestCase(unittest.TestCase):
 
     def test_field_without_provided_source(self):
         """If no source parameter is provided, the field's source attribute should be None"""
-        field = micromodels.fields.FieldBase()
+        field = micromodels.fields.BaseField()
         self.assertTrue(hasattr(field, 'source'))
         self.assertTrue(field.source is None)
 
     def test_field_with_provided_source(self):
         """If a source parameter is provided, the field's source attribute should be set to the value of this parameter"""
-        field = micromodels.fields.FieldBase(source='customsource')
+        field = micromodels.fields.BaseField(source='customsource')
         self.assertEqual(field.source, 'customsource')
-
-
-class PassFieldTestCase(unittest.TestCase):
-
-    def setUp(self):
-        self.field = micromodels.PassField()
-
-    def test_pass_field(self):
-        data = ('some', 'data', 42)
-        self.field.populate(data)
-        self.assertEqual(self.field.to_python(), data)
 
 
 class CharFieldTestCase(unittest.TestCase):

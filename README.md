@@ -108,7 +108,7 @@ If you wish to change this, you can pass the 'source' argument to each field ins
 
 ### Field types
 
-#### PassField
+#### BaseField
 
 The simplest type of field - this simply passes through whatever is in the data dictionary without changing it at all.
 
