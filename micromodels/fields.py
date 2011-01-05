@@ -6,8 +6,8 @@ class BaseField(object):
     The ``source`` parameter sets the key that will be retrieved from the source
     data. If ``source`` is not specified, the field instance will use its own
     name as the key to retrieve the value from the source data.
-    """
 
+    """
     def __init__(self, source=None):
         self.source = source
 
@@ -57,7 +57,6 @@ class IntegerField(BaseField):
         integer.
 
         """
-
         if self.data is None:
             return 0
         return int(self.data)
@@ -87,8 +86,8 @@ class DateTimeField(BaseField):
     The ``serial_format`` parameter is a strftime formatted string for
     serialization. If ``serial_format`` isn't specified, an ISO formatted string
     will be returned by :meth:`~micromodels.DateTimeField.to_serial`.
-    """
 
+    """
     def __init__(self, format, serial_format=None, **kwargs):
         super(DateTimeField, self).__init__(**kwargs)
         self.format = format
@@ -165,10 +164,8 @@ class ModelField(WrappedObjectField):
         u'Some nested value'
 
     """
-
     def to_python(self):
-        data = self.data or {}
-        return self._wrapped_class(data)
+        return self._wrapped_class(self.data or {})
 
     def to_serial(self, model_instance):
         return model_instance.to_dict(serial=True)
@@ -207,10 +204,8 @@ class ModelCollectionField(WrappedObjectField):
         [u'First value', u'Second value', u'Third value']
 
     """
-
     def to_python(self):
-        data = self.data or []
-        return [self._wrapped_class(item) for item in data]
+        return [self._wrapped_class(item) for item in self.data or []]
 
     def to_serial(self, model_instances):
         return [instance.to_dict(serial=True) for instance in model_instances]
@@ -292,21 +287,15 @@ class FieldCollectionField(WrappedObjectField):
 
 
     """
-
     def __init__(self, field_cls, args=(), kwargs = {}, **keyargs):
-        self._args = args
-        self._kwargs = kwargs
+        self._instance = field_cls(*args, **kwargs)
         super(FieldCollectionField, self).__init__(field_cls, **keyargs)
 
     def to_python(self):
-        data = self.data or []
-        converted = []
-        for item in data:
-            field_instance = self._wrapped_class(*self._args, **self._kwargs)
-            field_instance.populate(item)
-            converted.append(field_instance.to_python())
-            self._instance = field_instance
-        return converted
+        def convert(item):
+            self._instance.populate(item)
+            return self._instance.to_python()
+        return [convert(item) for item in self.data or []]
 
     def to_serial(self, list_of_fields):
         return [self._instance.to_serial(data) for data in list_of_fields]
