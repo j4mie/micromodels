@@ -275,10 +275,20 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
     def test_field_collection_field_to_serial(self):
         class Person(micromodels.Model):
             aliases = micromodels.FieldCollectionField(micromodels.CharField)
+            events = micromodels.FieldCollectionField(micromodels.DateField,
+                                                      args=('%Y-%m-%d',),
+                                                      kwargs=dict(serial_format='%m-%d-%Y'),
+                                                      source='schedule')
 
-        data = {'aliases': ['Joe', 'John', 'Bob']}
+        data = {
+                    'aliases': ['Joe', 'John', 'Bob'],
+                    'schedule': ['2011-01-30', '2011-04-01']
+        }
+
         p = Person(data)
-        self.assertEqual(p.to_dict(serial=True), data)
+        serial = p.to_dict(serial=True)
+        self.assertEqual(serial['aliases'], data['aliases'])
+        self.assertEqual(serial['events'][0], '01-30-2011')
 
 class ModelTestCase(unittest.TestCase):
 
