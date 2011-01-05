@@ -217,12 +217,86 @@ class ModelCollectionField(WrappedObjectField):
 
 
 class FieldCollectionField(WrappedObjectField):
-    """Field containing a list of fields"""
+    """Field containing a list of the same type of fields.
 
-    def __init__(self, wrapped_class, args=(), kwargs = {}, **keyargs):
+    The constructor takes the class of field. If the field needs to be
+    instantiated with arguments (like the ``format`` argument for the
+    :class:`~micromodels.DateTimeField`), these arguments can be passed into the
+    keyword arguments ``args`` and ``kwargs``. If these optional arguments are
+    used, ``args`` needs to receive a tuple and ``kwargs`` needs to receive a
+    dictionary.Beyond these keyword arguments, any other keyword arguments (like
+    ``source``) will be passed to :class:`~micromodels.BaseField`'s constructor.
+
+    This description is inherently confusing as this class contains a factory,
+    and code speaks better than anything, so here are some examples::
+
+        data = {
+                    'legal_name': 'John Smith',
+                    'aliases': ['Larry', 'Mo', 'Curly']
+        }
+
+        class Person(Model):
+            legal_name = CharField()
+            aliases = FieldCollectionField(CharField)
+
+        p = Person(data)
+
+    And now a quick REPL session::
+
+        >>> p.legal_name
+        u'John Smith'
+        >>> p.aliases
+        [u'Larry', u'Mo', u'Curly']
+        >>> p.to_dict()
+        {'legal_name': u'John Smith', 'aliases': [u'Larry', u'Mo', u'Curly']}
+        >>> p.to_dict() == p.to_dict(serial=True)
+        True
+
+    Here is a bit more complicated example involving args and kwargs::
+
+        data = {
+                    'name': 'San Andreas',
+                    'dates': ['1906-05-11', '1948-11-02', '1970-01-01']
+        }
+
+        class FaultLine(Model):
+            name = CharField()
+            earthquake_dates = FieldCollectionField(DateField, args=('%Y-%m-%d',),
+                                                    kwargs={'serial_format': '%m-%d-%Y'},
+                                                    source='dates')
+
+        f = FaultLine(data)
+
+    So args was passed a tuple, which consisted of a sole element representing
+    the input format. This is a required argument for creating a
+    :class:`~micromodels.DateField`. ``kwargs`` was given the ``serial_format``
+    desired for output. The ``source`` keyword argument is passed up to
+    :class:`~micromodels.BaseField` and allows our field instance (named
+    ``earthquake_dates`` to get the data under the key ``dates`` from the source
+    data.
+
+    Let's check out the resulting :class:`~micromodels.Model` instance with the
+    REPL::
+
+        >>> f.name
+        u'San Andreas'
+        >>> f.earthquake_dates
+        [datetime.date(1906, 5, 11), datetime.date(1948, 11, 2), datetime.date(1970, 1, 1)]
+        >>> f.to_dict()
+        {'earthquake_dates': [datetime.date(1906, 5, 11), datetime.date(1948, 11, 2), datetime.date(1970, 1, 1)],
+         'name': u'San Andreas'}
+        >>> f.to_dict(serial=True)
+        {'earthquake_dates': ['05-11-1906', '11-02-1948', '01-01-1970'], 'name': u'San Andreas'}
+        >>> f.to_json()
+        '{"earthquake_dates": ["05-11-1906", "11-02-1948", "01-01-1970"], "name": "San Andreas"}'
+
+
+    """
+
+    def __init__(self, field_cls, args=(), kwargs = {}, **keyargs):
         self._args = args
         self._kwargs = kwargs
-        super(FieldCollectionField, self).__init__(wrapped_class, **keyargs)
+        super(FieldCollectionField, self).__init__(field_cls, **keyargs)
 
     def to_python(self):
         data = self.data or []

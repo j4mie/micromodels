@@ -11,6 +11,7 @@ Fields
 -------------------
 
 .. autoclass:: micromodels.BaseField
+    :no-show-inheritance:
 
 Basic Fields
 ~~~~~~~~~~~~~~~~~~
@@ -26,7 +27,7 @@ Datetime Fields
 .. autoclass:: micromodels.DateField
 .. autoclass:: micromodels.TimeField
 
-Relation Fields
+Relationship Fields
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: micromodels.ModelField
