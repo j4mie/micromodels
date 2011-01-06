@@ -28,7 +28,7 @@ Datetime Fields
 .. autoclass:: micromodels.TimeField
 
 Relationship Fields
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: micromodels.ModelField
 .. autoclass:: micromodels.ModelCollectionField

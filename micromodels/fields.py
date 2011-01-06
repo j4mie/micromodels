@@ -285,7 +285,6 @@ class FieldCollectionField(WrappedObjectField):
         >>> f.to_json()
         '{"earthquake_dates": ["05-11-1906", "11-02-1948", "01-01-1970"], "name": "San Andreas"}'
 
-
     """
     def __init__(self, field_cls, args=(), kwargs = {}, **keyargs):
         self._instance = field_cls(*args, **kwargs)
