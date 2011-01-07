@@ -1,0 +1,407 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API &mdash; micromodels v.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="micromodels v.1 documentation" href="index.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">micromodels v.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="models">
+<h2>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="micromodels.Model">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">Model</tt><big>(</big><em>data</em>, <em>is_json=False</em><big>)</big><a class="headerlink" href="#micromodels.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Model is the main component of micromodels. Model makes it trivial
+to parse data from many sources, including JSON APIs.</p>
+<p>The constructor for model takes either a native Python dictionary (default)
+or a JSON dictionary if <tt class="docutils literal"><span class="pre">is_json</span></tt> is <tt class="xref docutils literal"><span class="pre">True</span></tt>.</p>
+<dl class="method">
+<dt id="micromodels.Model.add_field">
+<tt class="descname">add_field</tt><big>(</big><em>key</em>, <em>value</em>, <em>field</em><big>)</big><a class="headerlink" href="#micromodels.Model.add_field" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="xref py py-meth docutils literal"><span class="pre">add_field()</span></tt> must be used to add a field to an existing
+instance of Model. This method is required so that serialization of the
+data is possible. Data on existing fields (defined in the class) can be
+reassigned without using this method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="micromodels.Model.to_dict">
+<tt class="descname">to_dict</tt><big>(</big><em>serial=False</em><big>)</big><a class="headerlink" href="#micromodels.Model.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary representing the the data of the class is returned.
+Native Python objects will still exist in this dictionary (for example,
+a <tt class="docutils literal"><span class="pre">datetime</span></tt> object will be returned rather than a string)
+unless <tt class="docutils literal"><span class="pre">serial</span></tt> is set to True.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="micromodels.Model.to_json">
+<tt class="descname">to_json</tt><big>(</big><big>)</big><a class="headerlink" href="#micromodels.Model.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a representation of the model as a JSON string. This method
+relies on the <a class="reference internal" href="#micromodels.Model.to_dict" title="micromodels.Model.to_dict"><tt class="xref py py-meth docutils literal"><span class="pre">to_dict()</span></tt></a> method.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="fields">
+<h2>Fields<a class="headerlink" href="#fields" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="micromodels.BaseField">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">BaseField</tt><big>(</big><em>source=None</em><big>)</big><a class="headerlink" href="#micromodels.BaseField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for all field types.</p>
+<p>The <tt class="docutils literal"><span class="pre">source</span></tt> parameter sets the key that will be retrieved from the source
+data. If <tt class="docutils literal"><span class="pre">source</span></tt> is not specified, the field instance will use its own
+name as the key to retrieve the value from the source data.</p>
+<dl class="method">
+<dt id="micromodels.BaseField.populate">
+<tt class="descname">populate</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#micromodels.BaseField.populate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value or values wrapped by this field</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="micromodels.BaseField.to_python">
+<tt class="descname">to_python</tt><big>(</big><big>)</big><a class="headerlink" href="#micromodels.BaseField.to_python" title="Permalink to this definition">¶</a></dt>
+<dd><p>After being populated, this method casts the source data into a
+Python object. The default behavior is to simply return the source
+value. Subclasses should override this method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="micromodels.BaseField.to_serial">
+<tt class="descname">to_serial</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#micromodels.BaseField.to_serial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to serialize forms back into JSON or other formats.</p>
+<p>This method is essentially the opposite of
+<tt class="xref py py-meth docutils literal"><span class="pre">to_python()</span></tt>. A string, boolean,
+number, dictionary, list, or tuple must be returned. Subclasses should
+override this method.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="basic-fields">
+<h3>Basic Fields<a class="headerlink" href="#basic-fields" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="micromodels.BooleanField">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">BooleanField</tt><big>(</big><em>source=None</em><big>)</big><a class="headerlink" href="#micromodels.BooleanField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">micromodels.fields.BaseField</span></tt></p>
+<p>Field to represent a boolean</p>
+<dl class="method">
+<dt id="micromodels.BooleanField.to_python">
+<tt class="descname">to_python</tt><big>(</big><big>)</big><a class="headerlink" href="#micromodels.BooleanField.to_python" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string <tt class="docutils literal"><span class="pre">'True'</span></tt> (case insensitive) will be converted
+to <tt class="xref docutils literal"><span class="pre">True</span></tt>, as will any positive integers.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="micromodels.CharField">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">CharField</tt><big>(</big><em>source=None</em><big>)</big><a class="headerlink" href="#micromodels.CharField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">micromodels.fields.BaseField</span></tt></p>
+<p>Field to represent a simple Unicode string value.</p>
+<dl class="method">
+<dt id="micromodels.CharField.to_python">
+<tt class="descname">to_python</tt><big>(</big><big>)</big><a class="headerlink" href="#micromodels.CharField.to_python" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the data supplied using the <tt class="xref py py-meth docutils literal"><span class="pre">populate()</span></tt> method to a
+Unicode string.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="micromodels.IntegerField">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">IntegerField</tt><big>(</big><em>source=None</em><big>)</big><a class="headerlink" href="#micromodels.IntegerField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">micromodels.fields.BaseField</span></tt></p>
+<p>Field to represent an integer value</p>
+<dl class="method">
+<dt id="micromodels.IntegerField.to_python">
+<tt class="descname">to_python</tt><big>(</big><big>)</big><a class="headerlink" href="#micromodels.IntegerField.to_python" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the data supplied to the <tt class="xref py py-meth docutils literal"><span class="pre">populate()</span></tt> method to an
+integer.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="datetime-fields">
+<h3>Datetime Fields<a class="headerlink" href="#datetime-fields" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="micromodels.DateTimeField">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">DateTimeField</tt><big>(</big><em>format</em>, <em>serial_format=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#micromodels.DateTimeField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">micromodels.fields.BaseField</span></tt></p>
+<p>Field to represent a datetime</p>
+<p>The <tt class="docutils literal"><span class="pre">format</span></tt> parameter dictates the format of the input strings, and is
+used in the construction of the <tt class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></tt> object.</p>
+<p>The <tt class="docutils literal"><span class="pre">serial_format</span></tt> parameter is a strftime formatted string for
+serialization. If <tt class="docutils literal"><span class="pre">serial_format</span></tt> isn&#8217;t specified, an ISO formatted string
+will be returned by <tt class="xref py py-meth docutils literal"><span class="pre">to_serial()</span></tt>.</p>
+<dl class="method">
+<dt id="micromodels.DateTimeField.to_python">
+<tt class="descname">to_python</tt><big>(</big><big>)</big><a class="headerlink" href="#micromodels.DateTimeField.to_python" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <tt class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></tt> object is returned.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="micromodels.DateField">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">DateField</tt><big>(</big><em>format</em>, <em>serial_format=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#micromodels.DateField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">micromodels.fields.DateTimeField</span></tt></p>
+<p>Field to represent a <tt class="xref py py-mod docutils literal"><span class="pre">datetime.date</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="micromodels.TimeField">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">TimeField</tt><big>(</big><em>format</em>, <em>serial_format=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#micromodels.TimeField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">micromodels.fields.DateTimeField</span></tt></p>
+<p>Field to represent a <tt class="xref py py-mod docutils literal"><span class="pre">datetime.time</span></tt></p>
+</dd></dl>
+
+</div>
+<div class="section" id="relationship-fields">
+<h3>Relationship Fields<a class="headerlink" href="#relationship-fields" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="micromodels.ModelField">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">ModelField</tt><big>(</big><em>wrapped_class</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#micromodels.ModelField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">micromodels.fields.WrappedObjectField</span></tt></p>
+<p>Field containing a model instance</p>
+<p>Use this field when you wish to nest one object inside another.
+It takes a single required argument, which is the nested class.
+For example, given the following dictionary:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">some_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;first_item&#39;</span><span class="p">:</span> <span class="s">&#39;Some value&#39;</span><span class="p">,</span>
+    <span class="s">&#39;second_item&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;nested_item&#39;</span><span class="p">:</span> <span class="s">&#39;Some nested value&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>You could build the following classes
+(note that you have to define the inner nested models first):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyNestedModel</span><span class="p">(</span><span class="n">micromodels</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">nested_item</span> <span class="o">=</span> <span class="n">micromodels</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">MyMainModel</span><span class="p">(</span><span class="n">micromodels</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">first_item</span> <span class="o">=</span> <span class="n">micromodels</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+    <span class="n">second_item</span> <span class="o">=</span> <span class="n">micromodels</span><span class="o">.</span><span class="n">ModelField</span><span class="p">(</span><span class="n">MyNestedModel</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then you can access the data as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">MyMainModel</span><span class="p">(</span><span class="n">some_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">first_item</span>
+<span class="go">u&#39;Some value&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">second_item</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+<span class="go">&#39;MyNestedModel&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">second_item</span><span class="o">.</span><span class="n">nested_item</span>
+<span class="go">u&#39;Some nested value&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="micromodels.ModelCollectionField">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">ModelCollectionField</tt><big>(</big><em>wrapped_class</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#micromodels.ModelCollectionField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">micromodels.fields.WrappedObjectField</span></tt></p>
+<p>Field containing a list of model instances.</p>
+<p>Use this field when your source data dictionary contains a list of
+dictionaries. It takes a single required argument, which is the name of the
+nested class that each item in the list should be converted to.
+For example:</p>
+<div class="highlight-python"><pre>some_data = {
+    'list': [
+        {'value': 'First value'},
+        {'value': 'Second value'},
+        {'value': 'Third value'},
+    ]
+}
+
+class MyNestedModel(micromodels.Model):
+    value = micromodels.CharField()
+
+class MyMainModel(micromodels.Model):
+    list = micromodels.ModelCollectionField(MyNestedModel)
+
+&gt;&gt;&gt; m = MyMainModel(some_data)
+&gt;&gt;&gt; len(m.list)
+3
+&gt;&gt;&gt; m.list[0].__class__.__name__
+'MyNestedModel'
+&gt;&gt;&gt; m.list[0].value
+u'First value'
+&gt;&gt;&gt; [item.value for item in m.list]
+[u'First value', u'Second value', u'Third value']</pre>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="micromodels.FieldCollectionField">
+<em class="property">class </em><tt class="descclassname">micromodels.</tt><tt class="descname">FieldCollectionField</tt><big>(</big><em>field_instance</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#micromodels.FieldCollectionField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">micromodels.fields.BaseField</span></tt></p>
+<p>Field containing a list of the same type of fields.</p>
+<p>The constructor takes an instance of the field.</p>
+<p>Here are some examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;legal_name&#39;</span><span class="p">:</span> <span class="s">&#39;John Smith&#39;</span><span class="p">,</span>
+            <span class="s">&#39;aliases&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;Larry&#39;</span><span class="p">,</span> <span class="s">&#39;Mo&#39;</span><span class="p">,</span> <span class="s">&#39;Curly&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">legal_name</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">()</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="n">FieldCollectionField</span><span class="p">(</span><span class="n">CharField</span><span class="p">())</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And now a quick REPL session:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">legal_name</span>
+<span class="go">u&#39;John Smith&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">aliases</span>
+<span class="go">[u&#39;Larry&#39;, u&#39;Mo&#39;, u&#39;Curly&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{&#39;legal_name&#39;: u&#39;John Smith&#39;, &#39;aliases&#39;: [u&#39;Larry&#39;, u&#39;Mo&#39;, u&#39;Curly&#39;]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">p</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">serial</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Here is a bit more complicated example involving args and kwargs:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;San Andreas&#39;</span><span class="p">,</span>
+            <span class="s">&#39;dates&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;1906-05-11&#39;</span><span class="p">,</span> <span class="s">&#39;1948-11-02&#39;</span><span class="p">,</span> <span class="s">&#39;1970-01-01&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">FaultLine</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">CharField</span><span class="p">()</span>
+    <span class="n">earthquake_dates</span> <span class="o">=</span> <span class="n">FieldCollectionField</span><span class="p">(</span><span class="n">DateField</span><span class="p">(</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">,</span>
+                                            <span class="n">serial_format</span><span class="o">=</span><span class="s">&#39;%m-</span><span class="si">%d</span><span class="s">-%Y&#39;</span><span class="p">),</span>
+                                            <span class="n">source</span><span class="o">=</span><span class="s">&#39;dates&#39;</span><span class="p">)</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">FaultLine</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Notice that source is passed to to the
+<a class="reference internal" href="#micromodels.FieldCollectionField" title="micromodels.FieldCollectionField"><tt class="xref py py-class docutils literal"><span class="pre">FieldCollectionField</span></tt></a>, not the
+<a class="reference internal" href="#micromodels.DateField" title="micromodels.DateField"><tt class="xref py py-class docutils literal"><span class="pre">DateField</span></tt></a>.</p>
+<p>Let&#8217;s check out the resulting <a class="reference internal" href="#micromodels.Model" title="micromodels.Model"><tt class="xref py py-class docutils literal"><span class="pre">Model</span></tt></a> instance with the
+REPL:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span>
+<span class="go">u&#39;San Andreas&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">earthquake_dates</span>
+<span class="go">[datetime.date(1906, 5, 11), datetime.date(1948, 11, 2), datetime.date(1970, 1, 1)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{&#39;earthquake_dates&#39;: [datetime.date(1906, 5, 11), datetime.date(1948, 11, 2), datetime.date(1970, 1, 1)],</span>
+<span class="go"> &#39;name&#39;: u&#39;San Andreas&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">serial</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">{&#39;earthquake_dates&#39;: [&#39;05-11-1906&#39;, &#39;11-02-1948&#39;, &#39;01-01-1970&#39;], &#39;name&#39;: u&#39;San Andreas&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+<span class="go">&#39;{&quot;earthquake_dates&quot;: [&quot;05-11-1906&quot;, &quot;11-02-1948&quot;, &quot;01-01-1970&quot;], &quot;name&quot;: &quot;San Andreas&quot;}&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API</a><ul>
+<li><a class="reference internal" href="#models">Models</a></li>
+<li><a class="reference internal" href="#fields">Fields</a><ul>
+<li><a class="reference internal" href="#basic-fields">Basic Fields</a></li>
+<li><a class="reference internal" href="#datetime-fields">Datetime Fields</a></li>
+<li><a class="reference internal" href="#relationship-fields">Relationship Fields</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="introduction.html"
+                        title="previous chapter">Introduction</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             >previous</a> |</li>
+        <li><a href="index.html">micromodels v.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Jamie Matthews and Eric Martin.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.6.
+    </div>
+  </body>
+</html>
