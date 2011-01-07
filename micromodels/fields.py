@@ -211,19 +211,12 @@ class ModelCollectionField(WrappedObjectField):
         return [instance.to_dict(serial=True) for instance in model_instances]
 
 
-class FieldCollectionField(WrappedObjectField):
+class FieldCollectionField(BaseField):
     """Field containing a list of the same type of fields.
 
-    The constructor takes the class of field. If the field needs to be
-    instantiated with arguments (like the ``format`` argument for the
-    :class:`~micromodels.DateTimeField`), these arguments can be passed into the
-    keyword arguments ``args`` and ``kwargs``. If these optional arguments are
-    used, ``args`` needs to receive a tuple and ``kwargs`` needs to receive a
-    dictionary.Beyond these keyword arguments, any other keyword arguments (like
-    ``source``) will be passed to :class:`~micromodels.BaseField`'s constructor.
+    The constructor takes an instance of the field.
 
-    This description is inherently confusing as this class contains a factory,
-    and code speaks better than anything, so here are some examples::
+    Here are some examples::
 
         data = {
                     'legal_name': 'John Smith',
@@ -232,7 +225,7 @@ class FieldCollectionField(WrappedObjectField):
 
         class Person(Model):
             legal_name = CharField()
-            aliases = FieldCollectionField(CharField)
+            aliases = FieldCollectionField(CharField())
 
         p = Person(data)
 
@@ -256,19 +249,15 @@ class FieldCollectionField(WrappedObjectField):
 
         class FaultLine(Model):
             name = CharField()
-            earthquake_dates = FieldCollectionField(DateField, args=('%Y-%m-%d',),
-                                                    kwargs={'serial_format': '%m-%d-%Y'},
+            earthquake_dates = FieldCollectionField(DateField('%Y-%m-%d',
+                                                    serial_format='%m-%d-%Y'),
                                                     source='dates')
 
         f = FaultLine(data)
 
-    So args was passed a tuple, which consisted of a sole element representing
-    the input format. This is a required argument for creating a
-    :class:`~micromodels.DateField`. ``kwargs`` was given the ``serial_format``
-    desired for output. The ``source`` keyword argument is passed up to
-    :class:`~micromodels.BaseField` and allows our field instance (named
-    ``earthquake_dates`` to get the data under the key ``dates`` from the source
-    data.
+    Notice that source is passed to to the
+    :class:`~micromodels.FieldCollectionField`, not the
+    :class:`~micromodels.DateField`.
 
     Let's check out the resulting :class:`~micromodels.Model` instance with the
     REPL::
@@ -286,9 +275,9 @@ class FieldCollectionField(WrappedObjectField):
         '{"earthquake_dates": ["05-11-1906", "11-02-1948", "01-01-1970"], "name": "San Andreas"}'
 
     """
-    def __init__(self, field_cls, args=(), kwargs = {}, **keyargs):
-        self._instance = field_cls(*args, **kwargs)
-        super(FieldCollectionField, self).__init__(field_cls, **keyargs)
+    def __init__(self, field_instance, **kwargs):
+        super(FieldCollectionField, self).__init__(**kwargs)
+        self._instance = field_instance
 
     def to_python(self):
         def convert(item):

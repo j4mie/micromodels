@@ -263,7 +263,7 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
 
     def test_field_collection_field_creation(self):
         class HasAFieldCollectionField(micromodels.Model):
-            first = micromodels.FieldCollectionField(micromodels.CharField)
+            first = micromodels.FieldCollectionField(micromodels.CharField())
 
         data = {'first': ['one', 'two', 'three']}
         instance = HasAFieldCollectionField(data)
@@ -274,11 +274,9 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
 
     def test_field_collection_field_to_serial(self):
         class Person(micromodels.Model):
-            aliases = micromodels.FieldCollectionField(micromodels.CharField)
-            events = micromodels.FieldCollectionField(micromodels.DateField,
-                                                      args=('%Y-%m-%d',),
-                                                      kwargs=dict(serial_format='%m-%d-%Y'),
-                                                      source='schedule')
+            aliases = micromodels.FieldCollectionField(micromodels.CharField())
+            events = micromodels.FieldCollectionField(micromodels.DateField('%Y-%m-%d',
+                                        serial_format='%m-%d-%Y'), source='schedule')
 
         data = {
                     'aliases': ['Joe', 'John', 'Bob'],
