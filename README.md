@@ -141,7 +141,7 @@ Converts its supplied data to a Python `datetime.time` object using the format g
 
 #### FieldCollectionField
 
-Use this field when your source data dictionary contains a list of items of the same type. It takes a single required argument, which is an instance of the field type that should be used to convert each item in the list. For example:
+Use this field when your source data dictionary contains a list of items of the same type. It takes a single required argument, which is the field type that should be used to convert each item in the list. For example:
 
     some_data = {
         'first_list': [0, 34, 42],
@@ -149,8 +149,8 @@ Use this field when your source data dictionary contains a list of items of the 
     }
 
     class MyModel(micromodels.Model):
-        first_list = micromodels.FieldCollectionField(micromodels.IntegerField())
-        second_list = micromodels.FieldCollectionField(micromodels.CharField())
+        first_list = micromodels.FieldCollectionField(micromodels.IntegerField)
+        second_list = micromodels.FieldCollectionField(micromodels.CharField)
 
     >>> m = MyModel(some_data)
     >>> m.first_list
