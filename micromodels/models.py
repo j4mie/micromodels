@@ -10,7 +10,14 @@ class Model(object):
     to parse data from many sources, including JSON APIs.
 
     The constructor for model takes either a native Python dictionary (default)
-    or a JSON dictionary if ``is_json`` is ``True``.
+    or a JSON dictionary if ``is_json`` is ``True``. The dictionary passed does
+    not need to contain all of the values that the Model declares. These values
+    can be later assigned to the Model instance. It is worth noting that when
+    these values are assigned, the Model will automatically parse these into
+    the appropriate form using the to_python method on the field. This means
+    that the "raw" format should be assigned. For instance, if a Model has a
+    date field that you wish to assign after initialization, a string must be
+    assigned to the variable, not a Python date object.
 
     """
     class __metaclass__(type):
