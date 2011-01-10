@@ -1,5 +1,7 @@
 import unittest
 import micromodels
+from micromodels.fields import CharField
+from micromodels.models import json
 
 class ClassCreationTestCase(unittest.TestCase):
 
@@ -31,29 +33,18 @@ class ClassCreationTestCase(unittest.TestCase):
         self.assertEqual(self.instance._fields['field_with_source'].source, 'foo')
 
 
-class FieldBaseTestCase(unittest.TestCase):
+class BaseFieldTestCase(unittest.TestCase):
 
     def test_field_without_provided_source(self):
         """If no source parameter is provided, the field's source attribute should be None"""
-        field = micromodels.fields.FieldBase()
+        field = micromodels.fields.BaseField()
         self.assertTrue(hasattr(field, 'source'))
         self.assertTrue(field.source is None)
 
     def test_field_with_provided_source(self):
         """If a source parameter is provided, the field's source attribute should be set to the value of this parameter"""
-        field = micromodels.fields.FieldBase(source='customsource')
+        field = micromodels.fields.BaseField(source='customsource')
         self.assertEqual(field.source, 'customsource')
-
-
-class PassFieldTestCase(unittest.TestCase):
-
-    def setUp(self):
-        self.field = micromodels.PassField()
-
-    def test_pass_field(self):
-        data = ('some', 'data', 42)
-        self.field.populate(data)
-        self.assertEqual(self.field.to_python(), data)
 
 
 class CharFieldTestCase(unittest.TestCase):
@@ -183,7 +174,6 @@ class InstanceTestCase(unittest.TestCase):
         self.assertEqual(instance.first, data['first'])
         self.assertEqual(instance.second, data['second'])
         self.assertEqual(instance.third, data['third'])
-        self.assertEqual(instance._data, data)
 
     def test_custom_data_source(self):
         class CustomSourceModel(micromodels.Model):
@@ -209,6 +199,17 @@ class ModelFieldTestCase(unittest.TestCase):
         self.assertTrue(isinstance(instance.first, IsASubModel))
         self.assertEqual(instance.first.first, data['first']['first'])
 
+    def test_model_field_to_serial(self):
+        class User(micromodels.Model):
+            name = micromodels.CharField()
+
+        class Post(micromodels.Model):
+            title = micromodels.CharField()
+            author = micromodels.ModelField(User)
+
+        data = {'title': 'Test Post', 'author': {'name': 'Eric Martin'}}
+        post = Post(data)
+        self.assertEqual(post.to_dict(serial=True), data)
 
 class ModelCollectionFieldTestCase(unittest.TestCase):
 
@@ -238,12 +239,31 @@ class ModelCollectionFieldTestCase(unittest.TestCase):
         instance = HasAModelCollectionField(data)
         self.assertEqual(instance.first, [])
 
+    def test_model_collection_to_serial(self):
+        class Post(micromodels.Model):
+            title = micromodels.CharField()
+
+        class User(micromodels.Model):
+            name = micromodels.CharField()
+            posts = micromodels.ModelCollectionField(Post)
+
+        data = {
+                'name': 'Eric Martin',
+                'posts': [
+                            {'title': 'Post #1'},
+                            {'title': 'Post #2'}
+                ]
+        }
+
+        eric = User(data)
+        processed = eric.to_dict(serial=True)
+        self.assertEqual(processed, data)
 
 class FieldCollectionFieldTestCase(unittest.TestCase):
 
     def test_field_collection_field_creation(self):
         class HasAFieldCollectionField(micromodels.Model):
-            first = micromodels.FieldCollectionField(micromodels.CharField)
+            first = micromodels.FieldCollectionField(micromodels.CharField())
 
         data = {'first': ['one', 'two', 'three']}
         instance = HasAFieldCollectionField(data)
@@ -251,6 +271,65 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
         self.assertTrue(len(data['first']), len(instance.first))
         for index, value in enumerate(data['first']):
             self.assertEqual(instance.first[index], value)
+
+    def test_field_collection_field_to_serial(self):
+        class Person(micromodels.Model):
+            aliases = micromodels.FieldCollectionField(micromodels.CharField())
+            events = micromodels.FieldCollectionField(micromodels.DateField('%Y-%m-%d',
+                                        serial_format='%m-%d-%Y'), source='schedule')
+
+        data = {
+                    'aliases': ['Joe', 'John', 'Bob'],
+                    'schedule': ['2011-01-30', '2011-04-01']
+        }
+
+        p = Person(data)
+        serial = p.to_dict(serial=True)
+        self.assertEqual(serial['aliases'], data['aliases'])
+        self.assertEqual(serial['events'][0], '01-30-2011')
+
+class ModelTestCase(unittest.TestCase):
+
+    def setUp(self):
+        class Person(micromodels.Model):
+            name = micromodels.CharField()
+            age = micromodels.IntegerField()
+
+        self.Person = Person
+        self.data = {'name': 'Eric', 'age': 18}
+        self.json_data = json.dumps(self.data)
+
+    def test_model_creation(self):
+        instance = self.Person(self.json_data, is_json=True)
+        self.assertTrue(isinstance(instance, micromodels.Model))
+        self.assertEqual(instance.name, self.data['name'])
+        self.assertEqual(instance.age, self.data['age'])
+
+    def test_model_reserialization(self):
+        instance = self.Person(self.json_data, is_json=True)
+        self.assertEqual(instance.to_json(), self.json_data)
+        instance.name = 'John'
+        self.assertEqual(json.loads(instance.to_json())['name'],
+                         'John')
+
+    def test_model_type_change_serialization(self):
+        class Event(micromodels.Model):
+            time = micromodels.DateField(format="%Y-%m-%d")
+
+        data = {'time': '2000-10-31'}
+        json_data = json.dumps(data)
+
+        instance = Event(json_data, is_json=True)
+        output = instance.to_dict(serial=True)
+        self.assertEqual(output['time'], instance.time.isoformat())
+        self.assertEqual(json.loads(instance.to_json())['time'],
+                         instance.time.isoformat())
+
+    def test_model_add_field(self):
+        obj = self.Person(self.data)
+        obj.add_field('gender', 'male', micromodels.CharField())
+        self.assertEqual(obj.gender, 'male')
+        self.assertEqual(obj.to_dict(), dict(self.data, gender='male'))
 
 
 if __name__ == "__main__":
