@@ -1,8 +1,10 @@
 # micromodels
 
-A simple library for building read-only model classes based on dictionaries of data.
+A simple library for building model classes based on dictionaries of data.
 
 Perfect for (amongst other things) wrapping Python objects around JSON data returned from web-based APIs.
+
+**Authors**: Jamie Matthews (<https://github.com/j4mie>) and Eric Martin (<https://github.com/lightcatcher>).
 
 ## Installation
 
