@@ -331,6 +331,15 @@ class ModelTestCase(unittest.TestCase):
         self.assertEqual(obj.gender, 'male')
         self.assertEqual(obj.to_dict(), dict(self.data, gender='male'))
 
+    def test_model_late_assignment(self):
+        instance = self.Person(dict(name='Eric'))
+        self.assertEqual(instance.to_dict(), dict(name='Eric'))
+        instance.age = 18
+        self.assertEqual(instance.to_dict(), self.data)
+        instance.name = 'John'
+        self.assertEqual(instance.to_dict(), dict(name='John', age=18))
+        instance.age = '19'
+        self.assertEqual(instance.to_dict(), dict(name='John', age=19))
 
 if __name__ == "__main__":
     unittest.main()

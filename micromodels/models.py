@@ -30,12 +30,20 @@ class Model(object):
             data = json.loads(data)
         for name, field in self._clsfields.iteritems():
             key = field.source or name
-            field.populate(data.get(key))
-            setattr(self, name, field.to_python())
+            if key in data:
+                setattr(self, name, data.get(key))
+
+    def __setattr__(self, key, value):
+        if key in self._fields:
+            field = self._fields[key]
+            field.populate(value)
+            super(Model, self).__setattr__(key, field.to_python())
+        else:
+            super(Model, self).__setattr__(key, value)
 
     @property
     def _fields(self):
-        return dict(self._clsfields, **self._extra)
+        return dict(self._clsfields, **getattr(self, '_extra', {}))
 
     def add_field(self, key, value, field):
         ''':meth:`add_field` must be used to add a field to an existing
@@ -55,11 +63,13 @@ class Model(object):
         unless ``serial`` is set to True.
 
         '''
+        D = {}
         keys = (k for k in self.__dict__.keys() if k in self._fields.keys())
 
         if serial:
             return dict((key, self._fields[key].to_serial(getattr(self, key)))
                      for key in keys)
+
         else:
             return dict((key, getattr(self, key)) for key in keys)
 
