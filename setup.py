@@ -20,7 +20,7 @@ def get_version():
 
 setup(
     name='micromodels',
-    description='Declarative dictionary-based read-only model classes for Python',
+    description='Declarative dictionary-based model classes for Python',
     long_description=get_long_description(),
     version=get_version(),
     packages=['micromodels'],
