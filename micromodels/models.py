@@ -43,8 +43,17 @@ class Model(object):
     def __setattr__(self, key, value):
         if key in self._fields:
             field = self._fields[key]
-            field.populate(value)
-            super(Model, self).__setattr__(key, field.to_python())
+            try:
+                field.populate(value)
+                super(Model, self).__setattr__(key, field.to_python())
+            except:
+                try:
+                    field.to_serial(value)
+                except:
+                    raise TypeError('%s could not be serialized by %s' %\
+                                    (type(value).__name__, type(field).__name__))
+                else:
+                    super(Model, self).__setattr__(key, value)
         else:
             super(Model, self).__setattr__(key, value)
 
@@ -59,9 +68,9 @@ class Model(object):
         reassigned without using this method.
 
         '''
-        field.populate(value)
-        setattr(self, key, field.to_python())
         self._extra[key] = field
+        setattr(self, key, value)
+
 
     def to_dict(self, serial=False):
         '''A dictionary representing the the data of the class is returned.
