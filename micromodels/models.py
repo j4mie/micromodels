@@ -30,9 +30,24 @@ class Model(object):
             for key, value in attrs.iteritems():
                 if isinstance(value, BaseField):
                     cls._clsfields[key] = value
+                    delattr(cls, key)
 
-    def __init__(self, data, is_json=False):
-        self._extra = {}
+    def __init__(self):
+        super(Model, self).__setattr__('_extra', {})
+
+    @classmethod
+    def from_dict(cls, D, is_json=False):
+        instance = cls()
+        instance.set_data(D, is_json=is_json)
+        return instance
+
+    @classmethod
+    def from_kwargs(cls, **kwargs):
+        instance = cls()
+        instance.set_data(kwargs)
+        return instance
+
+    def set_data(self, data, is_json=False):
         if is_json:
             data = json.loads(data)
         for name, field in self._clsfields.iteritems():
@@ -59,7 +74,7 @@ class Model(object):
 
     @property
     def _fields(self):
-        return dict(self._clsfields, **getattr(self, '_extra', {}))
+        return dict(self._clsfields, **self._extra)
 
     def add_field(self, key, value, field):
         ''':meth:`add_field` must be used to add a field to an existing
@@ -79,15 +94,12 @@ class Model(object):
         unless ``serial`` is set to True.
 
         '''
-        D = {}
-        keys = (k for k in self.__dict__.keys() if k in self._fields.keys())
-
         if serial:
             return dict((key, self._fields[key].to_serial(getattr(self, key)))
-                     for key in keys)
-
+                        for key in self._fields.keys() if hasattr(self, key))
         else:
-            return dict((key, getattr(self, key)) for key in keys)
+            return dict((key, getattr(self, key)) for key in self._fields.keys()
+                       if hasattr(self, key))
 
     def to_json(self):
         '''Returns a representation of the model as a JSON string. This method
