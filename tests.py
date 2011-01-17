@@ -11,7 +11,7 @@ class ClassCreationTestCase(unittest.TestCase):
             name = micromodels.CharField()
             field_with_source = micromodels.CharField(source='foo')
         self.model_class = SimpleModel
-        self.instance = SimpleModel({})
+        self.instance = SimpleModel()
 
     def test_class_created(self):
         """Model instance should be of type SimpleModel"""
@@ -169,19 +169,18 @@ class InstanceTestCase(unittest.TestCase):
             second = micromodels.CharField()
             third = micromodels.CharField()
 
-        data = {'first': 'firstvalue', 'second': 'secondvalue', 'third': 'thirdvalue'}
-        instance = ThreeFieldsModel(data)
+        data = {'first': 'firstvalue', 'second': 'secondvalue'}
+        instance = ThreeFieldsModel.from_dict(data)
 
         self.assertEqual(instance.first, data['first'])
         self.assertEqual(instance.second, data['second'])
-        self.assertEqual(instance.third, data['third'])
 
     def test_custom_data_source(self):
         class CustomSourceModel(micromodels.Model):
             first = micromodels.CharField(source='custom_source')
 
         data = {'custom_source': 'somevalue'}
-        instance = CustomSourceModel(data)
+        instance = CustomSourceModel.from_dict(data)
 
         self.assertEqual(instance.first, data['custom_source'])
 
@@ -196,7 +195,7 @@ class ModelFieldTestCase(unittest.TestCase):
             first = micromodels.ModelField(IsASubModel)
 
         data = {'first': {'first': 'somevalue'}}
-        instance = HasAModelField(data)
+        instance = HasAModelField.from_dict(data)
         self.assertTrue(isinstance(instance.first, IsASubModel))
         self.assertEqual(instance.first.first, data['first']['first'])
 
@@ -209,7 +208,7 @@ class ModelFieldTestCase(unittest.TestCase):
             author = micromodels.ModelField(User)
 
         data = {'title': 'Test Post', 'author': {'name': 'Eric Martin'}}
-        post = Post(data)
+        post = Post.from_dict(data)
         self.assertEqual(post.to_dict(serial=True), data)
 
 class ModelCollectionFieldTestCase(unittest.TestCase):
@@ -222,7 +221,7 @@ class ModelCollectionFieldTestCase(unittest.TestCase):
             first = micromodels.ModelCollectionField(IsASubModel)
 
         data = {'first': [{'first': 'somevalue'}, {'first': 'anothervalue'}]}
-        instance = HasAModelCollectionField(data)
+        instance = HasAModelCollectionField.from_dict(data)
         self.assertTrue(isinstance(instance.first, list))
         for item in instance.first:
             self.assertTrue(isinstance(item, IsASubModel))
@@ -237,7 +236,7 @@ class ModelCollectionFieldTestCase(unittest.TestCase):
             first = micromodels.ModelCollectionField(IsASubModel)
 
         data = {'first': []}
-        instance = HasAModelCollectionField(data)
+        instance = HasAModelCollectionField.from_dict(data)
         self.assertEqual(instance.first, [])
 
     def test_model_collection_to_serial(self):
@@ -256,7 +255,7 @@ class ModelCollectionFieldTestCase(unittest.TestCase):
                 ]
         }
 
-        eric = User(data)
+        eric = User.from_dict(data)
         processed = eric.to_dict(serial=True)
         self.assertEqual(processed, data)
 
@@ -267,7 +266,7 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
             first = micromodels.FieldCollectionField(micromodels.CharField())
 
         data = {'first': ['one', 'two', 'three']}
-        instance = HasAFieldCollectionField(data)
+        instance = HasAFieldCollectionField.from_dict(data)
         self.assertTrue(isinstance(instance.first, list))
         self.assertTrue(len(data['first']), len(instance.first))
         for index, value in enumerate(data['first']):
@@ -284,7 +283,7 @@ class FieldCollectionFieldTestCase(unittest.TestCase):
                     'schedule': ['2011-01-30', '2011-04-01']
         }
 
-        p = Person(data)
+        p = Person.from_dict(data)
         serial = p.to_dict(serial=True)
         self.assertEqual(serial['aliases'], data['aliases'])
         self.assertEqual(serial['events'][0], '01-30-2011')
@@ -301,13 +300,13 @@ class ModelTestCase(unittest.TestCase):
         self.json_data = json.dumps(self.data)
 
     def test_model_creation(self):
-        instance = self.Person(self.json_data, is_json=True)
+        instance = self.Person.from_dict(self.json_data, is_json=True)
         self.assertTrue(isinstance(instance, micromodels.Model))
         self.assertEqual(instance.name, self.data['name'])
         self.assertEqual(instance.age, self.data['age'])
 
     def test_model_reserialization(self):
-        instance = self.Person(self.json_data, is_json=True)
+        instance = self.Person.from_dict(self.json_data, is_json=True)
         self.assertEqual(instance.to_json(), self.json_data)
         instance.name = 'John'
         self.assertEqual(json.loads(instance.to_json())['name'],
@@ -320,20 +319,20 @@ class ModelTestCase(unittest.TestCase):
         data = {'time': '2000-10-31'}
         json_data = json.dumps(data)
 
-        instance = Event(json_data, is_json=True)
+        instance = Event.from_dict(json_data, is_json=True)
         output = instance.to_dict(serial=True)
         self.assertEqual(output['time'], instance.time.isoformat())
         self.assertEqual(json.loads(instance.to_json())['time'],
                          instance.time.isoformat())
 
     def test_model_add_field(self):
-        obj = self.Person(self.data)
+        obj = self.Person.from_dict(self.data)
         obj.add_field('gender', 'male', micromodels.CharField())
         self.assertEqual(obj.gender, 'male')
         self.assertEqual(obj.to_dict(), dict(self.data, gender='male'))
 
     def test_model_late_assignment(self):
-        instance = self.Person(dict(name='Eric'))
+        instance = self.Person.from_dict(dict(name='Eric'))
         self.assertEqual(instance.to_dict(), dict(name='Eric'))
         instance.age = 18
         self.assertEqual(instance.to_dict(), self.data)
