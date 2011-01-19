@@ -1,6 +1,7 @@
+from datetime import date
 import unittest
+
 import micromodels
-from micromodels.fields import CharField
 from micromodels.models import json
 
 class ClassCreationTestCase(unittest.TestCase):
@@ -330,6 +331,26 @@ class ModelTestCase(unittest.TestCase):
         obj.add_field('gender', 'male', micromodels.CharField())
         self.assertEqual(obj.gender, 'male')
         self.assertEqual(obj.to_dict(), dict(self.data, gender='male'))
+
+    def test_model_late_assignment(self):
+        instance = self.Person(dict(name='Eric'))
+        self.assertEqual(instance.to_dict(), dict(name='Eric'))
+        instance.age = 18
+        self.assertEqual(instance.to_dict(), self.data)
+        instance.name = 'John'
+        self.assertEqual(instance.to_dict(), dict(name='John', age=18))
+        instance.age = '19'
+        self.assertEqual(instance.to_dict(), dict(name='John', age=19))
+
+        format = '%m-%d-%Y'
+        today = date.today()
+        today_str = today.strftime(format)
+
+        instance.add_field('birthday', today_str,
+                           micromodels.DateField(format))
+        self.assertEqual(instance.to_dict()['birthday'], today)
+        instance.birthday = today
+        self.assertEqual(instance.to_dict()['birthday'], today)
 
 
 if __name__ == "__main__":
