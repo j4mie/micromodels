@@ -28,7 +28,7 @@ Perfect for (amongst other things) wrapping Python objects around JSON data retu
         "date_of_birth": "1952-03-11",
     }
 
-    douglas = Author(douglas_data)
+    douglas = Author.from_dict(douglas_data)
     print "%s was born in %s" % (douglas.full_name, douglas.date_of_birth.strftime("%Y"))
 
 ## Slightly more complex example
@@ -56,7 +56,7 @@ Perfect for (amongst other things) wrapping Python objects around JSON data retu
 
 
     json_data = urlopen('http://api.twitter.com/1/statuses/show/20.json').read()
-    tweet = Tweet(json_data, is_json=True)
+    tweet = Tweet.from_dict(json_data, is_json=True)
 
     print tweet.user.name
     print tweet.user.get_profile_url()
