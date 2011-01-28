@@ -165,7 +165,7 @@ class ModelField(WrappedObjectField):
 
     """
     def to_python(self):
-        return self._wrapped_class(self.data or {})
+        return self._wrapped_class.from_dict(self.data or {})
 
     def to_serial(self, model_instance):
         return model_instance.to_dict(serial=True)
@@ -205,7 +205,7 @@ class ModelCollectionField(WrappedObjectField):
 
     """
     def to_python(self):
-        return [self._wrapped_class(item) for item in self.data or []]
+        return [self._wrapped_class.from_dict(item) for item in self.data]
 
     def to_serial(self, model_instances):
         return [instance.to_dict(serial=True) for instance in model_instances]
