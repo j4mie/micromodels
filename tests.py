@@ -72,6 +72,10 @@ class IntegerFieldTestCase(unittest.TestCase):
         self.field.populate(123)
         self.assertEqual(self.field.to_python(), 123)
 
+    def test_float_conversion(self):
+        self.field.populate(123.4)
+        self.assertEqual(self.field.to_python(), 123)
+
     def test_string_conversion(self):
         self.field.populate('123')
         self.assertEqual(self.field.to_python(), 123)
@@ -90,6 +94,10 @@ class FloatFieldTestCase(unittest.TestCase):
     def test_float_conversion(self):
         self.field.populate(123.4)
         self.assertEqual(self.field.to_python(), 123.4)
+
+    def test_integer_conversion(self):
+        self.field.populate(123)
+        self.assertEqual(self.field.to_python(), 123.0)
 
     def test_string_conversion(self):
         self.field.populate('123.4')
