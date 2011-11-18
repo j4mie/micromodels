@@ -62,6 +62,19 @@ class IntegerField(BaseField):
         return int(self.data)
 
 
+class FloatField(BaseField):
+    """Field to represent a floating point value"""
+
+    def to_python(self):
+        """Convert the data supplied to the :meth:`populate` method to a
+        float.
+
+        """
+        if self.data is None:
+            return 0.0
+        return float(self.data)
+
+
 class BooleanField(BaseField):
     """Field to represent a boolean"""
 

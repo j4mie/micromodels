@@ -19,6 +19,7 @@ Basic Fields
 .. autoclass:: micromodels.BooleanField
 .. autoclass:: micromodels.CharField
 .. autoclass:: micromodels.IntegerField
+.. autoclass:: micromodels.FloatField
 
 Datetime Fields
 ~~~~~~~~~~~~~~~~~~~~

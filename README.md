@@ -122,6 +122,10 @@ A field for string data. **Will attempt to convert its supplied data to Unicode.
 
 Attempts to convert its supplied data to an integer.
 
+#### FloatField
+
+Attempts to convert its supplied data to a floating point value.
+
 #### BooleanField
 
 Attempts to convert its supplied data to a boolean. If the data is a string, `"true"` (case insensitive) will be converted to `True` and all other strings will be converted to `False`. If the supplied data is an integer, positive numbers will become `True` and negative numbers or zero will become `False`.

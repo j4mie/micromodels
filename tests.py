@@ -72,6 +72,10 @@ class IntegerFieldTestCase(unittest.TestCase):
         self.field.populate(123)
         self.assertEqual(self.field.to_python(), 123)
 
+    def test_float_conversion(self):
+        self.field.populate(123.4)
+        self.assertEqual(self.field.to_python(), 123)
+
     def test_string_conversion(self):
         self.field.populate('123')
         self.assertEqual(self.field.to_python(), 123)
@@ -80,6 +84,29 @@ class IntegerFieldTestCase(unittest.TestCase):
         """IntegerField should convert None to 0"""
         self.field.populate(None)
         self.assertEqual(self.field.to_python(), 0)
+
+
+class FloatFieldTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.field = micromodels.FloatField()
+
+    def test_float_conversion(self):
+        self.field.populate(123.4)
+        self.assertEqual(self.field.to_python(), 123.4)
+
+    def test_integer_conversion(self):
+        self.field.populate(123)
+        self.assertEqual(self.field.to_python(), 123.0)
+
+    def test_string_conversion(self):
+        self.field.populate('123.4')
+        self.assertEqual(self.field.to_python(), 123.4)
+
+    def test_none_conversion(self):
+        """FloatField should convert None to 0.0"""
+        self.field.populate(None)
+        self.assertEqual(self.field.to_python(), 0.0)
 
 
 class BooleanFieldTestCase(unittest.TestCase):
