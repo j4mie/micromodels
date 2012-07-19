@@ -238,6 +238,26 @@ class ModelFieldTestCase(unittest.TestCase):
         post = Post.from_dict(data)
         self.assertEqual(post.to_dict(serial=True), data)
 
+    def test_failing_modelfield(self):
+        class SomethingExceptional(Exception):
+            pass
+
+        class User(micromodels.Model):
+            name = micromodels.CharField()
+
+            @classmethod
+            def from_dict(cls, *args, **kwargs):
+                raise SomethingExceptional("opps.")
+
+        class Post(micromodels.Model):
+            title = micromodels.CharField()
+            author = micromodels.ModelField(User)
+
+        data = {'title': 'Test Post', 'author': {'name': 'Eric Martin'}}
+        self.assertRaises(SomethingExceptional, Post.from_dict,
+                          data)
+                           
+
 class ModelCollectionFieldTestCase(unittest.TestCase):
 
     def test_model_collection_field_creation(self):

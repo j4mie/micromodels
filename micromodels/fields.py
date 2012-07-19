@@ -111,7 +111,12 @@ class DateTimeField(BaseField):
 
         if self.data is None:
             return None
-        return datetime.datetime.strptime(str(self.data), self.format)
+
+        # don't parse data that is already native
+        if isinstance(self.data, datetime.datetime):
+            return self.data
+        else:
+            return datetime.datetime.strptime(self.data, self.format)
 
     def to_serial(self, time_obj):
         if not self.serial_format:
@@ -122,16 +127,24 @@ class DateField(DateTimeField):
     """Field to represent a :mod:`datetime.date`"""
 
     def to_python(self):
-        datetime = super(DateField, self).to_python()
-        return datetime.date()
+        # don't parse data that is already native
+        if isinstance(self.data, datetime.date):
+            return self.data
+        
+        dt = super(DateField, self).to_python()
+        return dt.date()
 
 
 class TimeField(DateTimeField):
     """Field to represent a :mod:`datetime.time`"""
 
     def to_python(self):
-        datetime = super(TimeField, self).to_python()
-        return datetime.time()
+        # don't parse data that is already native
+        if isinstance(self.data, datetime.time):
+            return self.data
+
+        dt = super(TimeField, self).to_python()
+        return dt.time()
 
 
 class WrappedObjectField(BaseField):
@@ -178,7 +191,10 @@ class ModelField(WrappedObjectField):
 
     """
     def to_python(self):
-        return self._wrapped_class.from_dict(self.data or {})
+        if isinstance(self.data, self._wrapped_class):
+            return self.data
+        else:
+            return self._wrapped_class.from_dict(self.data or {})
 
     def to_serial(self, model_instance):
         return model_instance.to_dict(serial=True)
