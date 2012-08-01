@@ -132,18 +132,30 @@ Attempts to convert its supplied data to a boolean. If the data is a string, `"t
 
 #### DateTimeField
 
-Converts its supplied data to a Python `datetime.datetime` object using the format given in the required `format` argument. See [the Python documentation](http://docs.python.org/library/datetime.html#strftime-strptime-behavior) for details of the format string. For example:
+Converts its supplied data to a Python `datetime.datetime` object as `ISO8601`. 
+
+    class MyModel(micromodels.Model):
+        created_at = micromodels.DateTimeField()
+
+An optional format may be provided. 
 
     class MyModel(micromodels.Model):
         created_at = micromodels.DateTimeField(format="%a %b %d %H:%M:%S +0000 %Y")
 
+See [the Python
+documentation](http://docs.python.org/library/datetime.html#strftime-strptime-behavior)
+for details of the format string. For example:
+
 #### DateField
 
-Converts its supplied data to a Python `datetime.date` object using the format given in the required `format` argument (see `DateTimeField` for details).
+Converts its supplied data to a Python `datetime.date` object as
+`ISO8601` or using an option `format` argument (see `DateTimeField`
+for details)
 
 #### TimeField
 
-Converts its supplied data to a Python `datetime.time` object using the format given in the required `format` argument (see `DateTimeField` for details).
+Converts its supplied data to a Python `datetime.time` object as
+`ISO8601` or using an option `format` argument (see `DateTimeField` for details).
 
 #### FieldCollectionField
 
