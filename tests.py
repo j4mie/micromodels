@@ -157,6 +157,55 @@ class DateTimeFieldTestCase(unittest.TestCase):
         self.assertTrue(isinstance(converted, datetime.datetime))
         self.assertEqual(converted.strftime(self.format), self.datetimestring)
 
+    def test_iso8601_conversion(self):
+        import datetime
+        from micromodels.packages.PySO8601 import Timezone
+        
+        field = micromodels.DateTimeField()
+        field.populate("2010-07-13T14:01:00Z")
+        result = field.to_python()
+        expected = datetime.datetime(2010, 7, 13, 14, 1, 0,
+                                     tzinfo=Timezone())
+        self.assertEqual(expected, result)
+
+
+        field = micromodels.DateTimeField()
+        field.populate("2010-07-13T14:02:00-05:00")
+        result = field.to_python()
+        expected = datetime.datetime(2010, 7, 13, 14, 2, 0,
+                                     tzinfo=Timezone("-05:00"))
+
+        self.assertEqual(expected, result)
+
+
+        field = micromodels.DateTimeField()
+        field.populate("20100713T140200-05:00")
+        result = field.to_python()
+        expected = datetime.datetime(2010, 7, 13, 14, 2, 0,
+                                     tzinfo=Timezone("-05:00"))
+
+        self.assertEqual(expected, result)
+
+
+    def test_iso8601_to_serial(self):
+        import datetime
+        
+        field = micromodels.DateTimeField()
+        field.populate("2010-07-13T14:01:00Z")
+        native = field.to_python()
+        expected = "2010-07-13T14:01:00+00:00"
+        result = field.to_serial(native)
+
+        self.assertEqual(expected, result)
+
+        field = micromodels.DateTimeField()
+        field.populate("2010-07-13T14:02:00-05:00")
+        native = field.to_python()
+        expected = "2010-07-13T14:02:00-05:00"
+        result = field.to_serial(native)
+
+        self.assertEqual(expected, result)
+
 
 class DateFieldTestCase(unittest.TestCase):
 
@@ -172,6 +221,20 @@ class DateFieldTestCase(unittest.TestCase):
         self.assertTrue(isinstance(converted, datetime.date))
         self.assertEqual(converted.strftime(self.format), self.datestring)
 
+    def test_iso8601_conversion(self):
+        import datetime
+        field = micromodels.DateField()
+        field.populate("2010-12-28")
+        result = field.to_python()
+        expected = datetime.date(2010,12,28)
+        self.assertEqual(expected, result)
+
+        field = micromodels.DateField()
+        field.populate("20101228")
+        result = field.to_python()
+        expected = datetime.date(2010,12,28)
+        self.assertEqual(expected, result)
+
 
 class TimeFieldTestCase(unittest.TestCase):
 
@@ -186,6 +249,20 @@ class TimeFieldTestCase(unittest.TestCase):
         converted = self.field.to_python()
         self.assertTrue(isinstance(converted, datetime.time))
         self.assertEqual(converted.strftime(self.format), self.timestring)
+
+    def test_iso8601_conversion(self):
+        import datetime
+        field = micromodels.TimeField()
+        field.populate("09:33:30")
+        result = field.to_python()
+        expected = datetime.time(9,33,30)
+        self.assertEqual(expected, result)
+
+        field = micromodels.TimeField()
+        field.populate("093331")
+        result = field.to_python()
+        expected = datetime.time(9,33,31)
+        self.assertEqual(expected, result)
 
 
 class InstanceTestCase(unittest.TestCase):
