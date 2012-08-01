@@ -1,4 +1,6 @@
 import datetime
+from micromodels.packages import PySO8601
+
 
 class BaseField(object):
     """Base class for all field types.
@@ -101,7 +103,7 @@ class DateTimeField(BaseField):
     will be returned by :meth:`~micromodels.DateTimeField.to_serial`.
 
     """
-    def __init__(self, format, serial_format=None, **kwargs):
+    def __init__(self, format=None, serial_format=None, **kwargs):
         super(DateTimeField, self).__init__(**kwargs)
         self.format = format
         self.serial_format = serial_format
@@ -115,6 +117,9 @@ class DateTimeField(BaseField):
         # don't parse data that is already native
         if isinstance(self.data, datetime.datetime):
             return self.data
+        elif self.format is None:
+            # parse as iso8601
+            return PySO8601.parse(self.data)
         else:
             return datetime.datetime.strptime(self.data, self.format)
 
@@ -140,11 +145,13 @@ class TimeField(DateTimeField):
 
     def to_python(self):
         # don't parse data that is already native
-        if isinstance(self.data, datetime.time):
+        if isinstance(self.data, datetime.datetime):
             return self.data
-
-        dt = super(TimeField, self).to_python()
-        return dt.time()
+        elif self.format is None:
+            # parse as iso8601
+            return PySO8601.parse_time(self.data).time()
+        else:
+            return datetime.datetime.strptime(self.data, self.format).time()
 
 
 class WrappedObjectField(BaseField):
