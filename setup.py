@@ -1,6 +1,6 @@
 import os
 import re
-from setuptools import setup
+from setuptools import setup, find_packages
 
 rel_file = lambda *args: os.path.join(os.path.dirname(os.path.abspath(__file__)), *args)
 
@@ -23,7 +23,7 @@ setup(
     description='Declarative dictionary-based model classes for Python',
     long_description=get_long_description(),
     version=get_version(),
-    packages=['micromodels'],
+    packages=find_packages(),
     url='https://github.com/j4mie/micromodels/',
     author='Jamie Matthews',
     author_email='jamie.matthews@gmail.com',
