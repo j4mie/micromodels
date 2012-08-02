@@ -1,5 +1,5 @@
 import datetime
-from micromodels.packages import PySO8601
+import PySO8601
 
 
 class BaseField(object):
@@ -157,8 +157,11 @@ class TimeField(DateTimeField):
 class WrappedObjectField(BaseField):
     """Superclass for any fields that wrap an object"""
 
-    def __init__(self, wrapped_class, **kwargs):
+    def __init__(self, wrapped_class, related_name=None, **kwargs):
         self._wrapped_class = wrapped_class
+        self._related_name = related_name
+        self._related_obj = None
+
         BaseField.__init__(self, **kwargs)
 
 
@@ -199,9 +202,15 @@ class ModelField(WrappedObjectField):
     """
     def to_python(self):
         if isinstance(self.data, self._wrapped_class):
-            return self.data
+            obj = self.data
         else:
-            return self._wrapped_class.from_dict(self.data or {})
+            obj = self._wrapped_class.from_dict(self.data or {})
+
+        # Set the related object to the related field
+        if self._related_name is not None:
+            setattr(obj, self._related_name, self._related_obj)
+
+        return obj
 
     def to_serial(self, model_instance):
         return model_instance.to_dict(serial=True)
@@ -241,7 +250,14 @@ class ModelCollectionField(WrappedObjectField):
 
     """
     def to_python(self):
-        return [self._wrapped_class.from_dict(item) for item in self.data]
+        object_list = []
+        for item in self.data:
+            obj = self._wrapped_class.from_dict(item)
+            if self._related_name is not None:
+                setattr(obj, self._related_name, self._related_obj)
+            object_list.append(obj)
+
+        return object_list
 
     def to_serial(self, model_instances):
         return [instance.to_dict(serial=True) for instance in model_instances]

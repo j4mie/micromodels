@@ -208,9 +208,28 @@ Then you can access the data as follows:
     >>> m.second_item.nested_item
     u'Some nested value'
 
+`ModelField` takes an optional `related_name` argument.  The
+`related_name` is the name to use for the related model to refer back
+to the outer model:
+
+    class Person(Model):
+        name = CharField()
+        car = ModelField(Car, related_name="owner")
+
+    class Car(Model):
+         make = CharField()
+         model = CharField()
+
+    >>> person = Person.from_dict(some_data)
+    >>> person.car.owner == person
+    True
+
 #### ModelCollectionField
 
-Use this field when your source data dictionary contains a list of dictionaries. It takes a single required argument, which is the name of the nested class that each item in the list should be converted to. For example:
+Use this field when your source data dictionary contains a list of
+dictionaries. It takes a single required argument, which is the name
+of the nested class that each item in the list should be converted
+to. For example:
 
     some_data = {
         'list': [
@@ -236,6 +255,8 @@ Use this field when your source data dictionary contains a list of dictionaries.
     >>> [item.value for item in m.list]
     [u'First value', u'Second value', u'Third value']
 
+`ModelCollectionField` takes an optional `related_name` argument which
+serves the same purpose as it does with `ModelField`.
 
 ## (Un)license
 
