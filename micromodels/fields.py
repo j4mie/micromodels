@@ -1,5 +1,5 @@
 import datetime
-from micromodels.packages import PySO8601
+import PySO8601
 
 
 class BaseField(object):
