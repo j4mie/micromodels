@@ -315,6 +315,19 @@ class ModelFieldTestCase(unittest.TestCase):
         post = Post.from_dict(data)
         self.assertEqual(post.to_dict(serial=True), data)
 
+    def test_related_name(self):
+        class User(micromodels.Model):
+            name = micromodels.CharField()
+
+        class Post(micromodels.Model):
+            title = micromodels.CharField()
+            author = micromodels.ModelField(User, related_name="post")
+        
+        data = {'title': 'Test Post', 'author': {'name': 'Eric Martin'}}
+        post = Post.from_dict(data)
+        self.assertEqual(post.author.post, post)
+        self.assertEqual(post.to_dict(serial=True), data)        
+
     def test_failing_modelfield(self):
         class SomethingExceptional(Exception):
             pass
@@ -382,6 +395,30 @@ class ModelCollectionFieldTestCase(unittest.TestCase):
         eric = User.from_dict(data)
         processed = eric.to_dict(serial=True)
         self.assertEqual(processed, data)
+
+    def test_related_name(self):
+        class Post(micromodels.Model):
+            title = micromodels.CharField()
+
+        class User(micromodels.Model):
+            name = micromodels.CharField()
+            posts = micromodels.ModelCollectionField(Post, related_name="author")
+
+        data = {
+                'name': 'Eric Martin',
+                'posts': [
+                            {'title': 'Post #1'},
+                            {'title': 'Post #2'}
+                ]
+        }
+
+        eric = User.from_dict(data)
+        processed = eric.to_dict(serial=True)
+        for post in eric.posts:
+            self.assertEqual(post.author, eric)
+
+        self.assertEqual(processed, data)
+        
 
 class FieldCollectionFieldTestCase(unittest.TestCase):
 

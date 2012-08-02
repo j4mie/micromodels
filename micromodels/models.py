@@ -96,6 +96,7 @@ class Model(object):
         if key in self._fields:
             field = self._fields[key]
             field.populate(value)
+            field._related_obj = self
             super(Model, self).__setattr__(key, field.to_python())
         else:
             super(Model, self).__setattr__(key, value)
