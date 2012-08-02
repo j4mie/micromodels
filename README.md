@@ -1,5 +1,7 @@
 # micromodels
 
+[![Build Status](https://secure.travis-ci.org/j4mie/micromodels.png)](http://travis-ci.org/j4mie/micromodels)
+
 A simple library for building model classes based on dictionaries of data.
 
 Perfect for (amongst other things) wrapping Python objects around JSON data returned from web-based APIs.
