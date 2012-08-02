@@ -159,7 +159,7 @@ class DateTimeFieldTestCase(unittest.TestCase):
 
     def test_iso8601_conversion(self):
         import datetime
-        from micromodels.packages.PySO8601 import Timezone
+        from PySO8601 import Timezone
         
         field = micromodels.DateTimeField()
         field.populate("2010-07-13T14:01:00Z")
